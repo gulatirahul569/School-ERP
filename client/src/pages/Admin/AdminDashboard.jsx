@@ -1,23 +1,13 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../../services/API";
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState(null);
 
-  const token = localStorage.getItem("token");
-
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const res = await axios.get(
-          `${import.meta.env.VITE_API_URL}/admin/dashboard`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
+        const res = await API.get("/admin/dashboard");
         setStats(res.data);
       } catch (err) {
         console.log(err);
@@ -29,7 +19,6 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
-
       <h1 className="text-3xl font-bold mb-6">
         🧑‍💼 Admin Control Panel
       </h1>
@@ -52,7 +41,6 @@ const AdminDashboard = () => {
         </div>
 
       </div>
-
     </div>
   );
 };

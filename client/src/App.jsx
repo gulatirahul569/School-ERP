@@ -1,24 +1,49 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
+
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import StudentDashboard from "./pages/StudentDashboard";
-import TeacherDashboard from "./pages/TeacherDashboard";
-import ParentDashboard from "./pages/ParentDashboard";
-import AdminDashboard from "./pages/AdminDashboard";
+
+// pages
+import AdminDashboard from "./pages/Admin/AdminDashboard";
+import AdminLayout from "./pages/Admin/AdminLayout";
+import Classes from "./pages/admin/Classes";
+// import Announcements from "./pages/admin/Announcements";
+
+// auth guard
+import ProtectedRoute from "./routes/ProtectedRoute";
 
 function App() {
   return (
-    <BrowserRouter>
       <Routes>
+
+        {/* AUTH */}
         <Route path="/" element={<Login />} />
-        <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/student" element={<StudentDashboard />} />
-        <Route path="/teacher" element={<TeacherDashboard />} />
-        <Route path="/parent" element={<ParentDashboard />} />
-        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/register" element={<Register />} />
+
+        {/* ========================= */}
+        {/* ADMIN ROUTES (PROTECTED) */}
+        {/* ========================= */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <AdminLayout />
+            </ProtectedRoute>
+          }
+        >
+
+          {/* default dashboard */}
+          <Route index element={<AdminDashboard />} />
+
+          {/* modules */}
+          <Route path="classes" element={<Classes />} />
+          {/* <Route path="announcements" element={<Announcements />} /> */}
+
+        </Route>
+
       </Routes>
-    </BrowserRouter>
+
   );
 }
 

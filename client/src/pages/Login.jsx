@@ -1,14 +1,17 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import axios from "axios";
+import { useAuth } from "../Context/AuthContext";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -28,40 +31,34 @@ const Login = () => {
     }
 
     try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/auth/login`,
-        formData
-      );
+      setLoading(true);
 
-      // ✅ save token + role
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("role", res.data.user.role);
+      const user = await login(email, password);
 
       alert("Login successful");
 
-      // ✅ ROLE BASED REDIRECT (IMPORTANT FOR ERP)
-      if (res.data.user.role === "student") {
-        navigate("/student");
-      } else if (res.data.user.role === "admin") {
-        navigate("/admin");
-      } else {
-        navigate("/teacher");
-      }
+      // ROLE BASED REDIRECT
+      if (user.role === "student") navigate("/student");
+      else if (user.role === "admin") navigate("/admin");
+      else if (user.role === "teacher") navigate("/teacher");
+      else if (user.role === "parent") navigate("/parent");
 
     } catch (err) {
       alert(err.response?.data?.message || "Login failed");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center relative">
-      
+
       {/* DESKTOP BACKGROUND */}
       <div
         className="absolute inset-0 bg-cover bg-center hidden sm:block"
         style={{
           backgroundImage:
-            "url('https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?fm=jpg&q=60&w=3000&auto=format&fit=crop')",
+            "url('https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?auto=format&fit=crop&w=3000')",
         }}
       />
 
@@ -74,7 +71,7 @@ const Login = () => {
         }}
       />
 
-      {/* DARK OVERLAY */}
+      {/* OVERLAY */}
       <div className="absolute inset-0 bg-black/50"></div>
 
       {/* LOGIN BOX */}
@@ -82,7 +79,7 @@ const Login = () => {
         onSubmit={handleSubmit}
         className="
           relative z-10
-          w-[90%] sm:w-95 md:w-105
+          w-[90%] sm:w-96 md:w-105
           p-6 sm:p-8
           rounded-2xl
           bg-white/15 backdrop-blur-md
@@ -90,7 +87,7 @@ const Login = () => {
           shadow-2xl
         "
       >
-        <h2 className="text-3xl sm:text-4xl font-bold text-center mb-6 sm:mb-8 text-white">
+        <h2 className="text-3xl sm:text-4xl font-bold text-center mb-6 text-white">
           Login
         </h2>
 
@@ -117,21 +114,26 @@ const Login = () => {
         {/* BUTTON */}
         <button
           type="submit"
+          disabled={loading}
           className="
             w-full bg-white text-black py-3 rounded-lg
             font-semibold
             hover:bg-zinc-200
             active:scale-[0.98]
             transition
+            disabled:opacity-50
           "
         >
-          Login
+          {loading ? "Logging in..." : "Login"}
         </button>
 
         {/* LINK */}
         <p className="text-center text-white mt-5 text-sm">
           Don’t have an account?{" "}
-          <Link to="/register" className="text-blue-300 hover:underline font-medium">
+          <Link
+            to="/register"
+            className="text-blue-300 hover:underline font-medium"
+          >
             Sign up
           </Link>
         </p>

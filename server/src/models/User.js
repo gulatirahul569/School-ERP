@@ -23,6 +23,24 @@ const userSchema = new mongoose.Schema(
       enum: ["admin", "teacher", "student", "parent"],
       required: true,
     },
+
+    // Student belongs to one class
+    classId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Class",
+      default: null,
+    },
+
+    // Optional profile fields
+    phone: {
+      type: String,
+      default: "",
+    },
+
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
   },
   { timestamps: true }
 );
