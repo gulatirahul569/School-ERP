@@ -80,13 +80,14 @@ const AdminLayout = () => {
           {/* CORE MODULES */}
           {navItem("/admin/classes", "🏫 Class Management")}
           {navItem("/admin/attendance", "📝 Attendance")}
-          {navItem("/admin/announcements", "📢 Announcements")}
+          {navItem("/admin/announcement", "📢 Announcements")}
+          {navItem("/admin/timetable", " 📅 Time-Table")}
 
           <div className="my-3 border-t border-gray-700"></div>
 
           {/* USERS */}
-          {navItem("/admin/students", "🎓 Students")}
-          {navItem("/admin/teachers", "👨‍🏫 Teachers")}
+          {navItem("/admin/student", "🎓 Students")}
+          {navItem("/admin/teacher", "👨‍🏫 Teachers")}
 
           <div className="my-3 border-t border-gray-700"></div>
 

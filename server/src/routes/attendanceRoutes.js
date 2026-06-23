@@ -4,6 +4,7 @@ const router = express.Router();
 const {
   markAttendance,
   getStudentAttendance,
+  getAttendanceByDate,
   getClassAttendance,
 } = require("../controllers/attendanceController");
 
@@ -14,11 +15,11 @@ const authorizeRoles = require("../middleware/roleMiddleware");
 router.post(
   "/mark",
   protect,
-  authorizeRoles("teacher"),
+  authorizeRoles("teacher", "admin"),
   markAttendance
 );
 
-// Student view
+// Student attendance
 router.get(
   "/student",
   protect,
@@ -26,7 +27,15 @@ router.get(
   getStudentAttendance
 );
 
-// Teacher view
+// Attendance by class + date
+router.get(
+  "/by-date",
+  protect,
+  authorizeRoles("teacher", "admin"),
+  getAttendanceByDate
+);
+
+// Full class attendance history
 router.get(
   "/class/:classId",
   protect,
