@@ -71,11 +71,54 @@ exports.getStudentAttendance = async (req, res) => {
       "records.student": studentId,
     })
       .populate("classId", "name")
-      .sort({ createdAt: -1 });
+      .populate("markedBy", "name")
+      .sort({ date: -1 });
+
+    // =========================
+    // FLATTEN FOR STUDENT VIEW
+    // =========================
+
+    let present = 0;
+    let absent = 0;
+
+    const formatted = [];
+
+    attendance.forEach((doc) => {
+      const record = doc.records.find(
+        (r) =>
+          r.student.toString() ===
+          studentId.toString()
+      );
+
+      if (!record) return;
+
+      if (record.status === "present") present++;
+      else absent++;
+
+      formatted.push({
+        date: doc.date,
+        status: record.status,
+        className: doc.classId?.name,
+        markedBy: doc.markedBy,
+      });
+    });
+
+    const total = present + absent;
+
+    const percentage =
+      total > 0
+        ? Math.round((present / total) * 100)
+        : 0;
 
     return res.status(200).json({
       success: true,
-      attendance,
+      attendance: formatted,
+      stats: {
+        present,
+        absent,
+        total,
+        percentage,
+      },
     });
   } catch (error) {
     return res.status(500).json({

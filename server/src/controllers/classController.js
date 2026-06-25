@@ -1,7 +1,6 @@
 const Class = require("../models/Class");
 const User = require("../models/User");
 
-
 // =======================
 // CREATE CLASS
 // =======================
@@ -31,6 +30,7 @@ exports.createClass = async (req, res) => {
     const newClass = await Class.create({
       name: name.trim(),
       section: section.trim(),
+      students: [],
     });
 
     res.status(201).json({
@@ -46,19 +46,17 @@ exports.createClass = async (req, res) => {
   }
 };
 
-
-
-
 // =======================
 // GET ALL CLASSES
 // =======================
 exports.getClasses = async (req, res) => {
   try {
     const classes = await Class.find()
-      .populate("students", "name email") // 👈 THIS IS REQUIRED
+      .populate("students", "name email classId")
       .sort({ createdAt: -1 });
 
     res.json({
+      success: true,
       data: classes,
     });
   } catch (err) {
@@ -72,8 +70,8 @@ exports.getClasses = async (req, res) => {
 exports.getClassById = async (req, res) => {
   try {
     const classData = await Class.findById(req.params.id)
-      .populate("classTeacher", "name email role")
-      .populate("students", "name email role");
+      .populate("students", "name email role classId")
+      .populate("classTeacher", "name email role");
 
     if (!classData) {
       return res.status(404).json({
@@ -94,9 +92,8 @@ exports.getClassById = async (req, res) => {
   }
 };
 
-
 // =======================
-// ASSIGN STUDENT TO CLASS
+// ASSIGN STUDENT TO CLASS (FIXED)
 // =======================
 exports.assignStudentToClass = async (req, res) => {
   try {
@@ -118,23 +115,19 @@ exports.assignStudentToClass = async (req, res) => {
       });
     }
 
-    // prevent duplicate assignment
+    // prevent duplicate
     const alreadyExists = classData.students.some(
       (id) => id.toString() === studentId
     );
 
-    if (alreadyExists) {
-      return res.status(400).json({
-        success: false,
-        message: "Student already assigned to this class",
-      });
+    if (!alreadyExists) {
+      classData.students.push(studentId);
     }
 
-    // sync both sides
-    classData.students.push(studentId);
-    await classData.save();
-
+    // IMPORTANT: sync both sides
     student.classId = classId;
+
+    await classData.save();
     await student.save();
 
     res.status(200).json({
@@ -149,9 +142,8 @@ exports.assignStudentToClass = async (req, res) => {
   }
 };
 
-
 // =======================
-// REMOVE STUDENT FROM CLASS
+// REMOVE STUDENT (FIXED SYNC)
 // =======================
 exports.removeStudentFromClass = async (req, res) => {
   try {
@@ -171,8 +163,9 @@ exports.removeStudentFromClass = async (req, res) => {
 
     await classData.save();
 
+    // IMPORTANT FIX: proper sync
     await User.findByIdAndUpdate(studentId, {
-      classId: null,
+      $unset: { classId: "" }
     });
 
     res.status(200).json({
@@ -187,6 +180,9 @@ exports.removeStudentFromClass = async (req, res) => {
   }
 };
 
+// =======================
+// DELETE CLASS (FIXED SYNC)
+// =======================
 exports.deleteClass = async (req, res) => {
   try {
     const classId = req.params.id;

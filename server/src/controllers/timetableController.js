@@ -7,39 +7,37 @@ exports.createOrUpdateTimetable = async (req, res) => {
   try {
     const { classId, day, periods } = req.body;
 
-    // check class exists
-    const classData = await Class.findById(classId);
-    if (!classData) {
-      return res.status(404).json({ message: "Class not found" });
-    }
-
-    // check if timetable already exists for class + day
     let timetable = await Timetable.findOne({ classId, day });
 
     if (timetable) {
-      // update existing
-      timetable.periods = periods;
+      timetable.periods = periods.map((p) => ({
+        periodNo: p.periodNo,   // ✅ FIXED
+        subject: p.subject,
+        teacher: p.teacher,
+        startTime: p.startTime,
+        endTime: p.endTime,
+      }));
+
       await timetable.save();
 
-      return res.json({
-        message: "Timetable updated",
-        data: timetable,
-      });
+      return res.json({ message: "Updated", data: timetable });
     }
 
-    // create new
     timetable = await Timetable.create({
       classId,
       day,
-      periods,
+      periods: periods.map((p) => ({
+        periodNo: p.periodNo,   // ✅ FIXED
+        subject: p.subject,
+        teacher: p.teacher,
+        startTime: p.startTime,
+        endTime: p.endTime,
+      })),
     });
 
-    res.status(201).json({
-      message: "Timetable created",
-      data: timetable,
-    });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(201).json({ message: "Created", data: timetable });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 };
 

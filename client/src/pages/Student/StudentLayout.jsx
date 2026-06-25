@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../../Context/AuthContext";
 
-const AdminLayout = () => {
+const StudentLayout = () => {
   const { user, logout } = useAuth();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -28,7 +28,7 @@ const AdminLayout = () => {
       {/* MOBILE HEADER */}
       <div className="md:hidden bg-white border-b flex items-center justify-between p-4 sticky top-0 z-50">
         <h2 className="font-bold text-lg text-gray-800">
-          SchoolHub
+          Student Portal
         </h2>
 
         <button
@@ -39,7 +39,7 @@ const AdminLayout = () => {
         </button>
       </div>
 
-      {/* MOBILE OVERLAY */}
+      {/* OVERLAY */}
       {sidebarOpen && (
         <div
           className="fixed inset-0 bg-black/40 z-40 md:hidden"
@@ -61,7 +61,7 @@ const AdminLayout = () => {
         {/* MOBILE CLOSE */}
         <div className="flex justify-between items-center mb-6 md:hidden">
           <h2 className="font-bold text-lg text-gray-800">
-            SchoolHub
+            Student Portal
           </h2>
 
           <button
@@ -75,40 +75,31 @@ const AdminLayout = () => {
         {/* LOGO */}
         <div className="hidden md:flex items-center gap-3 mb-8">
           <div className="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center text-xl">
-            🦉
+            🎓
           </div>
 
           <div>
             <h2 className="text-2xl font-bold text-gray-800">
-              SchoolHub
+              Student Portal
             </h2>
 
             <p className="text-sm text-gray-500">
-              Admin Dashboard
+              School ERP
             </p>
           </div>
         </div>
 
-        {/* NAVIGATION */}
+        {/* MENU */}
         <nav className="space-y-2">
           <p className="text-xs font-semibold text-gray-400 uppercase mb-2">
             Menu
           </p>
 
-          {navItem("/admin", "📊 Dashboard")}
-          {navItem("/admin/classes", "🏫 Class Management")}
-          {navItem("/admin/attendance", "📝 Attendance")}
-          {navItem("/admin/announcement", "📢 Announcements")}
-          {navItem("/admin/timetable", "📅 Timetable")}
-
-          <div className="border-t my-4"></div>
-
-          <p className="text-xs font-semibold text-gray-400 uppercase mb-2">
-            Users
-          </p>
-
-          {navItem("/admin/student", "🎓 Students")}
-          {navItem("/admin/teacher", "👨‍🏫 Teachers")}
+          {navItem("/student", "🏠 Dashboard")}
+          {navItem("/student/attendance", "📝 Attendance")}
+          {navItem("/student/timetable", "📅 Timetable")}
+          {navItem("/student/announcements", "📢 Announcements")}
+          {navItem("/student/profile", "👤 My Profile")}
         </nav>
 
         {/* USER CARD */}
@@ -136,7 +127,7 @@ const AdminLayout = () => {
         </div>
       </aside>
 
-      {/* MAIN CONTENT */}
+      {/* CONTENT */}
       <main className="md:ml-80 p-6 min-h-screen bg-[#F6F7FC]">
         <Outlet />
       </main>
@@ -144,4 +135,4 @@ const AdminLayout = () => {
   );
 };
 
-export default AdminLayout;
+export default StudentLayout;

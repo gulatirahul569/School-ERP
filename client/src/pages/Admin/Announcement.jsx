@@ -5,6 +5,7 @@ const Announcement = () => {
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
   const [classId, setClassId] = useState("");
+
   const [classes, setClasses] = useState([]);
   const [announcements, setAnnouncements] = useState([]);
 
@@ -13,7 +14,7 @@ const Announcement = () => {
   const [msg, setMsg] = useState("");
 
   // =========================
-  // FETCH CLASSES (FIXED)
+  // FETCH CLASSES
   // =========================
   const fetchClasses = async () => {
     try {
@@ -22,15 +23,12 @@ const Announcement = () => {
       const raw = res.data;
 
       const classList =
-        Array.isArray(raw?.classes)
-          ? raw.classes
-          : Array.isArray(raw?.data?.classes)
-          ? raw.data.classes
-          : Array.isArray(raw?.data)
-          ? raw.data
-          : [];
+        raw?.classes ||
+        raw?.data?.classes ||
+        raw?.data ||
+        [];
 
-      setClasses(classList);
+      setClasses(Array.isArray(classList) ? classList : []);
     } catch (err) {
       console.error(err);
       setClasses([]);
@@ -38,7 +36,7 @@ const Announcement = () => {
   };
 
   // =========================
-  // FETCH ANNOUNCEMENTS
+  // FETCH ANNOUNCEMENTS (FIXED)
   // =========================
   const fetchAnnouncements = async () => {
     try {
@@ -46,12 +44,12 @@ const Announcement = () => {
 
       const res = await axios.get("/announcement");
 
+      console.log("ANNOUNCEMENTS API:", res.data);
+
       const list =
-        Array.isArray(res.data?.data)
-          ? res.data.data
-          : Array.isArray(res.data)
-          ? res.data
-          : [];
+        res.data?.data ||
+        res.data?.announcements ||
+        (Array.isArray(res.data) ? res.data : []);
 
       setAnnouncements(list);
     } catch (err) {
@@ -68,7 +66,7 @@ const Announcement = () => {
   }, []);
 
   // =========================
-  // CREATE ANNOUNCEMENT
+  // CREATE
   // =========================
   const handleCreate = async (e) => {
     e.preventDefault();
@@ -92,17 +90,14 @@ const Announcement = () => {
       fetchAnnouncements();
     } catch (err) {
       console.error(err);
-      setMsg(
-        err.response?.data?.message ||
-          "Failed to create announcement"
-      );
+      setMsg(err.response?.data?.message || "Failed to create announcement");
     } finally {
       setSaving(false);
     }
   };
 
   // =========================
-  // DELETE ANNOUNCEMENT
+  // DELETE
   // =========================
   const handleDelete = async (id) => {
     try {
@@ -114,6 +109,9 @@ const Announcement = () => {
     }
   };
 
+  // =========================
+  // UI
+  // =========================
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-6xl mx-auto">
@@ -138,7 +136,6 @@ const Announcement = () => {
 
           <form onSubmit={handleCreate} className="space-y-4">
 
-            {/* TITLE */}
             <input
               type="text"
               placeholder="Title"
@@ -148,7 +145,6 @@ const Announcement = () => {
               required
             />
 
-            {/* MESSAGE */}
             <textarea
               placeholder="Message"
               value={message}
@@ -158,31 +154,21 @@ const Announcement = () => {
               required
             />
 
-            {/* CLASS SELECT (SAFE MAP) */}
             <select
               value={classId}
               onChange={(e) => setClassId(e.target.value)}
               className="w-full border p-3 rounded-lg"
             >
-              <option value="">
-                Global Announcement
-              </option>
+              <option value="">Global Announcement</option>
 
-              {Array.isArray(classes) &&
-                classes.map((cls) => (
-                  <option
-                    key={cls._id}
-                    value={cls._id}
-                  >
-                    Class {cls.name}
-                    {cls.section
-                      ? ` - ${cls.section}`
-                      : ""}
-                  </option>
-                ))}
+              {classes.map((cls) => (
+                <option key={cls._id} value={cls._id}>
+                  Class {cls.name}
+                  {cls.section ? ` - ${cls.section}` : ""}
+                </option>
+              ))}
             </select>
 
-            {/* SUBMIT */}
             <button
               type="submit"
               disabled={saving}
@@ -209,10 +195,7 @@ const Announcement = () => {
             <div className="space-y-4">
 
               {announcements.map((a) => (
-                <div
-                  key={a._id}
-                  className="border p-4 rounded-lg"
-                >
+                <div key={a._id} className="border p-4 rounded-lg">
 
                   <div className="flex justify-between">
                     <h3 className="font-semibold">
@@ -234,9 +217,11 @@ const Announcement = () => {
                   <div className="text-xs text-gray-400 mt-2">
                     {a.type === "global"
                       ? "Global"
-                      : `Class: ${a.classId?.name || "N/A"}`}
+                      : a.classId
+                        ? `Class: ${a.classId.name}`
+                        : "Class Announcement"}
                     {" • "}
-                    By {a.createdBy?.name || "Admin"}
+                    By {a.createdBy?.name || "Admin/Teacher"}
                   </div>
 
                 </div>
@@ -244,6 +229,7 @@ const Announcement = () => {
 
             </div>
           )}
+
         </div>
 
       </div>
@@ -251,4 +237,4 @@ const Announcement = () => {
   );
 };
 
-export default Announcement;
+export default Announcement; 

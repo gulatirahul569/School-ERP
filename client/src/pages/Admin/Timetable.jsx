@@ -10,6 +10,19 @@ const DAYS = [
   "Saturday",
 ];
 
+// FIXED PERIOD STRUCTURE (6 periods + break)
+const PERIOD_SLOTS = [
+  { label: "Period 1", start: "09:00", end: "10:00" },
+  { label: "Period 2", start: "10:00", end: "11:00" },
+  { label: "Period 3", start: "11:00", end: "12:00" },
+
+  { label: "BREAK", start: "12:00", end: "12:30", isBreak: true },
+
+  { label: "Period 4", start: "12:30", end: "13:30" },
+  { label: "Period 5", start: "13:30", end: "14:30" },
+  { label: "Period 6", start: "14:30", end: "15:30" },
+];
+
 const Timetable = () => {
   const [classes, setClasses] = useState([]);
   const [teachers, setTeachers] = useState([]);
@@ -17,14 +30,16 @@ const Timetable = () => {
   const [classId, setClassId] = useState("");
   const [day, setDay] = useState("");
 
-  const [periods, setPeriods] = useState([
-    {
+  const [periods, setPeriods] = useState(
+    PERIOD_SLOTS.map((p, i) => ({
+      periodNo: i + 1,
       subject: "",
       teacher: "",
-      startTime: "",
-      endTime: "",
-    },
-  ]);
+      startTime: p.start,
+      endTime: p.end,
+      isBreak: p.isBreak || false,
+    })),
+  );
 
   const [timetable, setTimetable] = useState([]);
   const [message, setMessage] = useState("");
@@ -52,14 +67,35 @@ const Timetable = () => {
   }, []);
 
   // =========================
-  // FETCH TIMETABLE
+  // LOAD TIMETABLE ON CLASS CHANGE
   // =========================
-  const fetchTimetable = async (id) => {
-    if (!id) return;
+  const handleClassChange = async (e) => {
+    const value = e.target.value;
+    setClassId(value);
+
+    if (!value) {
+      setTimetable([]);
+      return;
+    }
 
     try {
-      const res = await axios.get(`/timetable/class/${id}`);
-      setTimetable(Array.isArray(res.data) ? res.data : []);
+      const res = await axios.get(`/timetable/class/${value}`);
+
+      const data = Array.isArray(res.data) ? res.data : [];
+
+      setTimetable(data);
+
+      // reset periods when class changes
+      setPeriods(
+        PERIOD_SLOTS.map((p, i) => ({
+          periodNo: i + 1,
+          subject: "",
+          teacher: "",
+          startTime: p.start,
+          endTime: p.end,
+          isBreak: p.isBreak || false,
+        })),
+      );
     } catch (err) {
       console.log(err);
       setTimetable([]);
@@ -67,31 +103,48 @@ const Timetable = () => {
   };
 
   // =========================
-  // CLASS CHANGE
+  // LOAD DAY DATA (IMPORTANT FIX)
   // =========================
-  const handleClassChange = (e) => {
-    const value = e.target.value;
-    setClassId(value);
+  useEffect(() => {
+    if (!classId || !day) return;
 
-    if (value) fetchTimetable(value);
-    else setTimetable([]);
-  };
+    const loadDayData = async () => {
+      try {
+        const res = await axios.get(`/timetable/class/${classId}`);
+
+        const all = Array.isArray(res.data) ? res.data : [];
+
+        const dayData = all.find((t) => t.day === day);
+
+        if (dayData) {
+          setPeriods(
+            PERIOD_SLOTS.map((slot, i) => {
+              const existing = dayData.periods.find(
+                (p) => p.startTime === slot.start,
+              );
+
+              return {
+                periodNo: i + 1,
+                subject: existing?.subject || "",
+                teacher: existing?.teacher || "",
+                startTime: slot.start,
+                endTime: slot.end,
+                isBreak: slot.isBreak || false,
+              };
+            }),
+          );
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    loadDayData();
+  }, [classId, day]);
 
   // =========================
-  // PERIOD HANDLING
+  // UPDATE PERIOD
   // =========================
-  const addPeriod = () => {
-    setPeriods([
-      ...periods,
-      {
-        subject: "",
-        teacher: "",
-        startTime: "",
-        endTime: "",
-      },
-    ]);
-  };
-
   const updatePeriod = (index, field, value) => {
     const updated = [...periods];
     updated[index][field] = value;
@@ -99,35 +152,37 @@ const Timetable = () => {
   };
 
   // =========================
-  // SUBMIT TIMETABLE
+  // SAVE TIMETABLE
   // =========================
   const handleSubmit = async () => {
-    if (!classId) return setMessage("Select class first");
-    if (!day) return setMessage("Select day first");
-
-    // 🔥 FIX: prevent empty teacher crash
-    const cleanedPeriods = periods.map((p) => ({
-      ...p,
-      teacher: p.teacher || null,
-    }));
+    if (!classId || !day) {
+      return setMessage("Select class and day");
+    }
 
     try {
       setSaving(true);
-      setMessage("");
 
       await axios.post("/timetable", {
         classId,
         day,
-        periods: cleanedPeriods,
+        periods: periods
+          .filter((p) => !p.isBreak)
+          .map((p, i) => ({
+            periodNo: i + 1, // 🔥 FIXED: ALWAYS 1-6
+            subject: p.subject,
+            teacher: p.teacher,
+            startTime: p.startTime,
+            endTime: p.endTime,
+          })),
       });
 
       setMessage("Timetable saved successfully");
-      fetchTimetable(classId);
+
+      // reload after save
+      const res = await axios.get(`/timetable/class/${classId}`);
+      setTimetable(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
-      console.log(err);
-      setMessage(
-        err.response?.data?.message || "Error saving timetable"
-      );
+      setMessage(err.response?.data?.message || "Error saving timetable");
     } finally {
       setSaving(false);
     }
@@ -139,13 +194,8 @@ const Timetable = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-6xl mx-auto">
+        <h1 className="text-3xl font-bold mb-6">📅 Timetable Management</h1>
 
-        {/* HEADER */}
-        <h1 className="text-3xl font-bold mb-6">
-          📅 Timetable Management
-        </h1>
-
-        {/* MESSAGE */}
         {message && (
           <div className="mb-4 p-3 bg-blue-100 text-blue-700 rounded">
             {message}
@@ -154,7 +204,6 @@ const Timetable = () => {
 
         {/* CLASS + DAY */}
         <div className="bg-white p-4 rounded shadow mb-6 grid md:grid-cols-2 gap-4">
-
           <select
             value={classId}
             onChange={handleClassChange}
@@ -180,73 +229,59 @@ const Timetable = () => {
               </option>
             ))}
           </select>
-
         </div>
 
         {/* PERIODS */}
         <div className="bg-white p-4 rounded shadow mb-6">
-          <h2 className="font-bold mb-3">Periods</h2>
+          <h2 className="font-bold mb-3">Fixed Period Structure</h2>
 
           {periods.map((p, i) => (
             <div
               key={i}
-              className="grid md:grid-cols-4 gap-2 mb-3"
+              className="grid md:grid-cols-4 gap-2 mb-3 items-center"
             >
+              {/* LABEL */}
+              <div className="font-semibold text-gray-600">
+                {PERIOD_SLOTS[i].label}
+              </div>
 
-              {/* SUBJECT */}
-              <input
-                placeholder="Subject"
-                value={p.subject}
-                onChange={(e) =>
-                  updatePeriod(i, "subject", e.target.value)
-                }
-                className="border p-2 rounded"
-              />
+              {/* BREAK */}
+              {p.isBreak ? (
+                <div className="col-span-3 text-center text-red-500 font-bold">
+                  BREAK TIME ☕
+                </div>
+              ) : (
+                <>
+                  {/* SUBJECT */}
+                  <input
+                    placeholder="Subject"
+                    value={p.subject}
+                    onChange={(e) => updatePeriod(i, "subject", e.target.value)}
+                    className="border p-2 rounded"
+                  />
 
-              {/* TEACHER DROPDOWN (FIXED) */}
-              <select
-                value={p.teacher}
-                onChange={(e) =>
-                  updatePeriod(i, "teacher", e.target.value)
-                }
-                className="border p-2 rounded"
-              >
-                <option value="">Select Teacher</option>
-                {teachers.map((t) => (
-                  <option key={t._id} value={t._id}>
-                    {t.name}
-                  </option>
-                ))}
-              </select>
+                  {/* TEACHER */}
+                  <select
+                    value={p.teacher}
+                    onChange={(e) => updatePeriod(i, "teacher", e.target.value)}
+                    className="border p-2 rounded"
+                  >
+                    <option value="">Select Teacher</option>
+                    {teachers.map((t) => (
+                      <option key={t._id} value={t._id}>
+                        {t.name}
+                      </option>
+                    ))}
+                  </select>
 
-              {/* TIME */}
-              <input
-                type="time"
-                value={p.startTime}
-                onChange={(e) =>
-                  updatePeriod(i, "startTime", e.target.value)
-                }
-                className="border p-2 rounded"
-              />
-
-              <input
-                type="time"
-                value={p.endTime}
-                onChange={(e) =>
-                  updatePeriod(i, "endTime", e.target.value)
-                }
-                className="border p-2 rounded"
-              />
-
+                  {/* TIME */}
+                  <div className="text-sm text-gray-500">
+                    {p.startTime} - {p.endTime}
+                  </div>
+                </>
+              )}
             </div>
           ))}
-
-          <button
-            onClick={addPeriod}
-            className="bg-gray-200 px-3 py-1 rounded"
-          >
-            + Add Period
-          </button>
         </div>
 
         {/* SAVE */}
@@ -260,25 +295,17 @@ const Timetable = () => {
 
         {/* DISPLAY */}
         <div className="mt-8">
-          <h2 className="text-xl font-bold mb-3">
-            Saved Timetable
-          </h2>
+          <h2 className="text-xl font-bold mb-3">Saved Timetable</h2>
 
           {timetable.length === 0 ? (
             <p>No timetable found</p>
           ) : (
             timetable.map((t) => (
-              <div
-                key={t._id}
-                className="bg-white p-4 rounded shadow mb-3"
-              >
+              <div key={t._id} className="bg-white p-4 rounded shadow mb-3">
                 <h3 className="font-bold">{t.day}</h3>
 
                 {t.periods.map((p, i) => (
-                  <div
-                    key={i}
-                    className="text-sm text-gray-700"
-                  >
+                  <div key={i} className="text-sm text-gray-700">
                     {p.subject} | {p.startTime} - {p.endTime}
                   </div>
                 ))}
@@ -286,7 +313,6 @@ const Timetable = () => {
             ))
           )}
         </div>
-
       </div>
     </div>
   );

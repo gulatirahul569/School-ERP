@@ -23,6 +23,7 @@ const timetableSchema = new mongoose.Schema(
 
     periods: [
       {
+        periodNo: Number, 
         subject: String,
 
         teacher: {
