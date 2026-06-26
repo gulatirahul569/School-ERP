@@ -31,6 +31,7 @@ exports.createClass = async (req, res) => {
       name: name.trim(),
       section: section.trim(),
       students: [],
+      classTeacher: null,
     });
 
     res.status(201).json({
@@ -53,14 +54,18 @@ exports.getClasses = async (req, res) => {
   try {
     const classes = await Class.find()
       .populate("students", "name email classId")
+      .populate("classTeacher", "name email")
       .sort({ createdAt: -1 });
 
-    res.json({
+    res.status(200).json({
       success: true,
       data: classes,
     });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
   }
 };
 
@@ -93,13 +98,14 @@ exports.getClassById = async (req, res) => {
 };
 
 // =======================
-// ASSIGN STUDENT TO CLASS (FIXED)
+// ASSIGN STUDENT
 // =======================
 exports.assignStudentToClass = async (req, res) => {
   try {
     const { classId, studentId } = req.body;
 
     const classData = await Class.findById(classId);
+
     if (!classData) {
       return res.status(404).json({
         success: false,
@@ -108,6 +114,7 @@ exports.assignStudentToClass = async (req, res) => {
     }
 
     const student = await User.findById(studentId);
+
     if (!student || student.role !== "student") {
       return res.status(400).json({
         success: false,
@@ -115,16 +122,14 @@ exports.assignStudentToClass = async (req, res) => {
       });
     }
 
-    // prevent duplicate
     const alreadyExists = classData.students.some(
-      (id) => id.toString() === studentId
+      (id) => id.toString() === studentId,
     );
 
     if (!alreadyExists) {
       classData.students.push(studentId);
     }
 
-    // IMPORTANT: sync both sides
     student.classId = classId;
 
     await classData.save();
@@ -143,13 +148,14 @@ exports.assignStudentToClass = async (req, res) => {
 };
 
 // =======================
-// REMOVE STUDENT (FIXED SYNC)
+// REMOVE STUDENT
 // =======================
 exports.removeStudentFromClass = async (req, res) => {
   try {
     const { classId, studentId } = req.body;
 
     const classData = await Class.findById(classId);
+
     if (!classData) {
       return res.status(404).json({
         success: false,
@@ -158,14 +164,13 @@ exports.removeStudentFromClass = async (req, res) => {
     }
 
     classData.students = classData.students.filter(
-      (id) => id.toString() !== studentId
+      (id) => id.toString() !== studentId,
     );
 
     await classData.save();
 
-    // IMPORTANT FIX: proper sync
     await User.findByIdAndUpdate(studentId, {
-      $unset: { classId: "" }
+      $unset: { classId: "" },
     });
 
     res.status(200).json({
@@ -181,7 +186,104 @@ exports.removeStudentFromClass = async (req, res) => {
 };
 
 // =======================
-// DELETE CLASS (FIXED SYNC)
+// ASSIGN CLASS TEACHER
+// =======================
+exports.assignTeacherToClass = async (req, res) => {
+  try {
+    const { classId, teacherId } = req.body;
+
+    const classData = await Class.findById(classId);
+
+    if (!classData) {
+      return res.status(404).json({
+        success: false,
+        message: "Class not found",
+      });
+    }
+
+    const teacher = await User.findById(teacherId);
+
+    if (!teacher || teacher.role !== "teacher") {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid teacher",
+      });
+    }
+
+    classData.classTeacher = teacherId;
+
+    await classData.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Teacher assigned successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// =======================
+// REMOVE CLASS TEACHER
+// =======================
+exports.removeTeacherFromClass = async (req, res) => {
+  try {
+    const { classId } = req.body;
+
+    const classData = await Class.findById(classId);
+
+    if (!classData) {
+      return res.status(404).json({
+        success: false,
+        message: "Class not found",
+      });
+    }
+
+    classData.classTeacher = null;
+
+    await classData.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Teacher removed successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// =======================
+// GET MY CLASSES (Teacher)
+// =======================
+exports.getMyClasses = async (req, res) => {
+  try {
+
+    const classes = await Class.find({
+      classTeacher: req.user._id,
+    })
+      .populate("students", "name email")
+      .populate("classTeacher", "name email");
+
+    res.status(200).json({
+      success: true,
+      data: classes,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// =======================
+// DELETE CLASS
 // =======================
 exports.deleteClass = async (req, res) => {
   try {
@@ -196,22 +298,19 @@ exports.deleteClass = async (req, res) => {
       });
     }
 
-    // remove class reference from students
-    await User.updateMany(
-      { classId: classId },
-      { $unset: { classId: "" } }
-    );
+    // Remove class reference from students
+    await User.updateMany({ classId: classId }, { $unset: { classId: "" } });
 
     await Class.findByIdAndDelete(classId);
 
-    res.json({
+    res.status(200).json({
       success: true,
       message: "Class deleted successfully",
     });
-  } catch (err) {
+  } catch (error) {
     res.status(500).json({
       success: false,
-      message: err.message,
+      message: error.message,
     });
   }
 };

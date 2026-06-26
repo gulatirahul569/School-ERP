@@ -7,16 +7,33 @@ const {
   getClassById,
   assignStudentToClass,
   removeStudentFromClass,
-  deleteClass,   // 👈 ADD THIS
+  deleteClass,
+  getMyClasses,
+  assignTeacherToClass,
+  removeTeacherFromClass,
 } = require("../controllers/classController");
 
 const protect = require("../middleware/authMiddleware");
 const authorizeRoles = require("../middleware/roleMiddleware");
 
+// =====================================================
+// ⚠️ IMPORTANT: SPECIFIC ROUTES MUST COME BEFORE "/:id"
+// =====================================================
 
 // =======================
-// CLASS CRUD
+// TEACHER - MY CLASSES
 // =======================
+router.get(
+  "/my-classes",
+  protect,
+  authorizeRoles("teacher"),
+  getMyClasses
+);
+
+// =======================
+// CLASS CRUD (ADMIN)
+// =======================
+
 router.post(
   "/",
   protect,
@@ -31,6 +48,11 @@ router.get(
   getClasses
 );
 
+// =======================
+// GET CLASS BY ID (ADMIN + TEACHER)
+// =======================
+
+
 router.get(
   "/:id",
   protect,
@@ -38,6 +60,10 @@ router.get(
   getClassById
 );
 
+
+// =======================
+// DELETE CLASS
+// =======================
 router.delete(
   "/:id",
   protect,
@@ -46,7 +72,7 @@ router.delete(
 );
 
 // =======================
-// STUDENT ASSIGNMENT
+// STUDENT ASSIGNMENT (ADMIN)
 // =======================
 router.post(
   "/assign-student",
@@ -60,6 +86,23 @@ router.post(
   protect,
   authorizeRoles("admin"),
   removeStudentFromClass
+);
+
+// =======================
+// TEACHER ASSIGNMENT (ADMIN)
+// =======================
+router.post(
+  "/assign-teacher",
+  protect,
+  authorizeRoles("admin"),
+  assignTeacherToClass
+);
+
+router.post(
+  "/remove-teacher",
+  protect,
+  authorizeRoles("admin"),
+  removeTeacherFromClass
 );
 
 module.exports = router;

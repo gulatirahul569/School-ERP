@@ -75,3 +75,29 @@ exports.getMyTimetable = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+exports.getTeacherTimetable = async (req, res) => {
+  try {
+    const teacherId = req.user._id;
+
+    const timetable = await Timetable.find({
+      "periods.teacher": teacherId,
+    })
+      .populate("classId", "name section")
+      .populate("periods.teacher", "name email")
+      .sort({ day: 1 });
+
+    // IMPORTANT: filter only teacher's periods
+    const filtered = timetable.map((t) => ({
+      _id: t._id,
+      classId: t.classId,
+      day: t.day,
+      periods: t.periods.filter(
+        (p) => String(p.teacher?._id) === String(teacherId)
+      ),
+    }));
+
+    res.json(filtered);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};

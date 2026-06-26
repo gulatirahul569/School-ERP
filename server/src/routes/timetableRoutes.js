@@ -4,6 +4,7 @@ const router = express.Router();
 const {
   createOrUpdateTimetable,
   getClassTimetable,
+  getTeacherTimetable,
   getMyTimetable,
 } = require("../controllers/timetableController");
 
@@ -28,6 +29,12 @@ router.get(
   getClassTimetable
 );
 
+router.get(
+  "/teacher",
+  protect,
+  authorizeRoles("teacher"),
+  getTeacherTimetable
+);
 
 // ➜ STUDENT gets own timetable
 router.get(

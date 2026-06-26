@@ -4,18 +4,22 @@ import API from "../../services/API";
 const Classes = () => {
   const [classes, setClasses] = useState([]);
   const [students, setStudents] = useState([]);
+  const [teachers, setTeachers] = useState([]);
 
   const [form, setForm] = useState({
     name: "",
     section: "",
   });
 
-  // 👇 FIXED: per-class selected student
   const [selectedStudents, setSelectedStudents] = useState({});
+  const [selectedTeachers, setSelectedTeachers] = useState({});
 
-  // =========================
-  // FETCH CLASSES
-  // =========================
+  useEffect(() => {
+    fetchClasses();
+    fetchStudents();
+    fetchTeachers();
+  }, []);
+
   const fetchClasses = async () => {
     try {
       const res = await API.get("/class");
@@ -25,9 +29,6 @@ const Classes = () => {
     }
   };
 
-  // =========================
-  // FETCH STUDENTS
-  // =========================
   const fetchStudents = async () => {
     try {
       const res = await API.get("/user?role=student");
@@ -37,41 +38,75 @@ const Classes = () => {
     }
   };
 
-  useEffect(() => {
-    fetchClasses();
-    fetchStudents();
-  }, []);
+  const fetchTeachers = async () => {
+    try {
+      const res = await API.get("/user?role=teacher");
+      setTeachers(res.data.data || []);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
-  // =========================
-  // CREATE CLASS
-  // =========================
   const createClass = async (e) => {
     e.preventDefault();
 
     try {
       await API.post("/class", form);
-      setForm({ name: "", section: "" });
+      setForm({
+        name: "",
+        section: "",
+      });
       fetchClasses();
     } catch (err) {
-      alert(err.response?.data?.message || "Error creating class");
+      alert(err.response?.data?.message);
     }
   };
 
-  // =========================
-  // DELETE CLASS
-  // =========================
   const deleteClass = async (id) => {
+    if (!window.confirm("Delete this class?")) return;
+
     try {
       await API.delete(`/class/${id}`);
       fetchClasses();
     } catch (err) {
-      alert(err.response?.data?.message || "Error deleting class");
+      alert(err.response?.data?.message);
     }
   };
 
-  // =========================
-  // ASSIGN STUDENT
-  // =========================
+  const assignTeacher = async (classId) => {
+    const teacherId = selectedTeachers[classId];
+
+    if (!teacherId) return;
+
+    try {
+      await API.post("/class/assign-teacher", {
+        classId,
+        teacherId,
+      });
+
+      setSelectedTeachers({
+        ...selectedTeachers,
+        [classId]: "",
+      });
+
+      fetchClasses();
+    } catch (err) {
+      alert(err.response?.data?.message);
+    }
+  };
+
+  const removeTeacher = async (classId) => {
+    try {
+      await API.post("/class/remove-teacher", {
+        classId,
+      });
+
+      fetchClasses();
+    } catch (err) {
+      alert(err.response?.data?.message);
+    }
+  };
+
   const assignStudent = async (classId) => {
     const studentId = selectedStudents[classId];
 
@@ -90,13 +125,10 @@ const Classes = () => {
 
       fetchClasses();
     } catch (err) {
-      alert(err.response?.data?.message || "Error assigning student");
+      alert(err.response?.data?.message);
     }
   };
 
-  // =========================
-  // REMOVE STUDENT
-  // =========================
   const removeStudent = async (classId, studentId) => {
     try {
       await API.post("/class/remove-student", {
@@ -111,124 +143,262 @@ const Classes = () => {
   };
 
   return (
-    <div className="p-6">
+    <div className="min-h-screen bg-gray-100 p-8">
 
-      {/* HEADER */}
-      <h1 className="text-2xl font-bold mb-6">
-        🏫 Class Management
-      </h1>
+      <div className="max-w-7xl mx-auto">
 
-      {/* CREATE CLASS */}
-      <form
-        onSubmit={createClass}
-        className="bg-white p-4 rounded-xl shadow mb-6 flex gap-3"
-      >
-        <input
-          type="text"
-          placeholder="Class Name (e.g. 10)"
-          value={form.name}
-          onChange={(e) =>
-            setForm({ ...form, name: e.target.value })
-          }
-          className="border p-2 rounded w-full"
-        />
+        {/* Header */}
 
-        <input
-          type="text"
-          placeholder="Section (A/B/C)"
-          value={form.section}
-          onChange={(e) =>
-            setForm({ ...form, section: e.target.value })
-          }
-          className="border p-2 rounded w-full"
-        />
+        <div className="flex justify-between items-center mb-8">
 
-        <button className="bg-black text-white px-4 rounded">
-          Create
-        </button>
-      </form>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-800">
+              Class Management
+            </h1>
 
-      {/* CLASS LIST */}
-      <div className="grid md:grid-cols-2 gap-4">
+            <p className="text-gray-500">
+              Manage classes, teachers and students
+            </p>
+          </div>
 
-        {classes.map((cls) => (
-          <div
-            key={cls._id}
-            className="bg-white p-4 rounded-xl shadow"
-          >
+        </div>
 
-            {/* HEADER */}
-            <div className="flex justify-between items-center">
-              <h2 className="font-bold text-lg">
-                Class {cls.name}-{cls.section}
-              </h2>
+        {/* Create */}
 
-              <button
-                onClick={() => deleteClass(cls._id)}
-                className="text-red-600 text-sm"
-              >
-                Delete
-              </button>
-            </div>
+        <form
+          onSubmit={createClass}
+          className="bg-white rounded-2xl shadow p-6 mb-8 flex flex-col md:flex-row gap-4"
+        >
+          <input
+            type="text"
+            placeholder="Class Name"
+            value={form.name}
+            onChange={(e) =>
+              setForm({ ...form, name: e.target.value })
+            }
+            className="border rounded-xl p-3 flex-1"
+          />
 
-            {/* ASSIGN STUDENT */}
-            <div className="flex gap-2 mt-3">
-              <select
-                value={selectedStudents[cls._id] || ""}
-                onChange={(e) =>
-                  setSelectedStudents({
-                    ...selectedStudents,
-                    [cls._id]: e.target.value,
-                  })
-                }
-                className="border p-2 rounded w-full"
-              >
-                <option value="">Select student</option>
-                {(students || []).map((s) => (
-                  <option key={s._id} value={s._id}>
-                    {s.name}
-                  </option>
-                ))}
-              </select>
+          <input
+            type="text"
+            placeholder="Section"
+            value={form.section}
+            onChange={(e) =>
+              setForm({ ...form, section: e.target.value })
+            }
+            className="border rounded-xl p-3 flex-1"
+          />
 
-              <button
-                onClick={() => assignStudent(cls._id)}
-                className="bg-green-600 text-white px-3 rounded"
-              >
-                Add
-              </button>
-            </div>
+          <button className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-8">
+            Create
+          </button>
+        </form>
 
-            {/* STUDENT LIST */}
-            <div className="mt-4 space-y-2">
+        {/* Cards */}
 
-              {(!cls.students || cls.students.length === 0) && (
-                <p className="text-gray-500 text-sm">
-                  No students assigned
-                </p>
-              )}
+        <div className="grid lg:grid-cols-2 gap-6">
 
-              {cls.students?.map((s) => (
-                <div
-                  key={s._id}
-                  className="flex justify-between items-center bg-gray-100 p-2 rounded"
+          {classes.map((cls) => (
+
+            <div
+              key={cls._id}
+              className="bg-white rounded-2xl shadow p-6"
+            >
+
+              {/* Header */}
+
+              <div className="flex justify-between items-center">
+
+                <div>
+
+                  <h2 className="text-2xl font-bold">
+                    Class {cls.name}-{cls.section}
+                  </h2>
+
+                  <p className="text-gray-500 mt-1">
+                    {cls.students.length} Students
+                  </p>
+
+                </div>
+
+                <button
+                  onClick={() => deleteClass(cls._id)}
+                  className="text-red-500 hover:text-red-700"
                 >
-                  <span>{s.name}</span>
+                  Delete
+                </button>
+
+              </div>
+
+              {/* Teacher */}
+
+              <div className="mt-6 border rounded-xl p-4 bg-indigo-50">
+
+                <h3 className="font-semibold mb-3">
+                  Class Teacher
+                </h3>
+
+                {cls.classTeacher ? (
+
+                  <div className="flex justify-between items-center">
+
+                    <div>
+
+                      <p className="font-semibold">
+                        {cls.classTeacher.name}
+                      </p>
+
+                      <p className="text-sm text-gray-500">
+                        {cls.classTeacher.email}
+                      </p>
+
+                    </div>
+
+                    <button
+                      onClick={() => removeTeacher(cls._id)}
+                      className="text-red-500"
+                    >
+                      Remove
+                    </button>
+
+                  </div>
+
+                ) : (
+
+                  <div className="flex gap-2">
+
+                    <select
+                      className="border rounded-lg p-2 flex-1"
+                      value={selectedTeachers[cls._id] || ""}
+                      onChange={(e) =>
+                        setSelectedTeachers({
+                          ...selectedTeachers,
+                          [cls._id]: e.target.value,
+                        })
+                      }
+                    >
+                      <option value="">
+                        Select Teacher
+                      </option>
+
+                      {teachers.map((teacher) => (
+                        <option
+                          key={teacher._id}
+                          value={teacher._id}
+                        >
+                          {teacher.name}
+                        </option>
+                      ))}
+
+                    </select>
+
+                    <button
+                      onClick={() => assignTeacher(cls._id)}
+                      className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 rounded-lg"
+                    >
+                      Assign
+                    </button>
+
+                  </div>
+
+                )}
+
+              </div>
+
+              {/* Student */}
+
+              <div className="mt-6">
+
+                <h3 className="font-semibold mb-3">
+                  Students
+                </h3>
+
+                <div className="flex gap-2 mb-4">
+
+                  <select
+                    className="border rounded-lg p-2 flex-1"
+                    value={selectedStudents[cls._id] || ""}
+                    onChange={(e) =>
+                      setSelectedStudents({
+                        ...selectedStudents,
+                        [cls._id]: e.target.value,
+                      })
+                    }
+                  >
+                    <option value="">
+                      Select Student
+                    </option>
+
+                    {students.map((student) => (
+                      <option
+                        key={student._id}
+                        value={student._id}
+                      >
+                        {student.name}
+                      </option>
+                    ))}
+
+                  </select>
 
                   <button
-                    onClick={() =>
-                      removeStudent(cls._id, s._id)
-                    }
-                    className="text-red-500 text-sm"
+                    onClick={() => assignStudent(cls._id)}
+                    className="bg-green-600 hover:bg-green-700 text-white px-5 rounded-lg"
                   >
-                    Remove
+                    Add
                   </button>
+
                 </div>
-              ))}
+
+                <div className="space-y-2 max-h-64 overflow-y-auto">
+
+                  {cls.students.length === 0 && (
+                    <div className="text-gray-400 text-center py-4">
+                      No students assigned
+                    </div>
+                  )}
+
+                  {cls.students.map((student) => (
+
+                    <div
+                      key={student._id}
+                      className="flex justify-between items-center border rounded-xl p-3"
+                    >
+
+                      <div>
+
+                        <p className="font-medium">
+                          {student.name}
+                        </p>
+
+                        <p className="text-sm text-gray-500">
+                          {student.email}
+                        </p>
+
+                      </div>
+
+                      <button
+                        onClick={() =>
+                          removeStudent(cls._id, student._id)
+                        }
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        Remove
+                      </button>
+
+                    </div>
+
+                  ))}
+
+                </div>
+
+              </div>
 
             </div>
-          </div>
-        ))}
+
+          ))}
+
+        </div>
+
       </div>
     </div>
   );

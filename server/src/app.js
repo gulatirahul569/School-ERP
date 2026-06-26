@@ -7,6 +7,7 @@ const attendanceRoutes = require("./routes/attendanceRoutes");
 const classRoutes = require("./routes/classRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const announcementRoutes = require("./routes/announcementRoutes");
+const teacherRoutes = require("./routes/teacherRoutes");
 
 const app = express();
 const authRoutes = require("./routes/authRoutes");
@@ -27,5 +28,6 @@ app.use("/api/attendance", attendanceRoutes);
 app.use("/api/class", classRoutes);
 app.use("/api/announcement", announcementRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/teacher", teacherRoutes);
 
 module.exports = app;

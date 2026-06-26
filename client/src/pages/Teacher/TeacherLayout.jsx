@@ -44,7 +44,7 @@ const TeacherLayout = () => {
       {sidebarOpen && (
         <div
           className="fixed inset-0 bg-black/40 z-40 md:hidden"
-          onClick={() => setSidebarOpen(false)}
+          onClick={() => setSidebarOpen(false)}Details
         />
       )}
 
@@ -83,7 +83,7 @@ const TeacherLayout = () => {
 
           {navItem("/teacher", "🏠 Dashboard")}
           {navItem("/teacher/classes", "🏫 My Classes")}
-          {navItem("/teacher/students", "🎓 Students")}
+          {navItem("/teacher/Result", "🎓 Result")}
           {navItem("/teacher/attendance", "📝 Attendance")}
           {navItem("/teacher/timetable", "📅 Timetable")}
           {navItem("/teacher/announcements", "📢 Announcements")}

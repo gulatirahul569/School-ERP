@@ -15,12 +15,21 @@ const PERIOD_SLOTS = [
   { label: "Period 1", start: "09:00", end: "10:00" },
   { label: "Period 2", start: "10:00", end: "11:00" },
   { label: "Period 3", start: "11:00", end: "12:00" },
-
   { label: "BREAK", start: "12:00", end: "12:30", isBreak: true },
-
   { label: "Period 4", start: "12:30", end: "13:30" },
   { label: "Period 5", start: "13:30", end: "14:30" },
   { label: "Period 6", start: "14:30", end: "15:30" },
+];
+
+// SAME STRUCTURE AS STUDENT VIEW
+const TIME_SLOTS = [
+  { periodNo: 1, label: "Period 1", time: "09:00 - 10:00" },
+  { periodNo: 2, label: "Period 2", time: "10:00 - 11:00" },
+  { periodNo: 3, label: "Period 3", time: "11:00 - 12:00" },
+  { periodNo: 0, label: "BREAK", time: "12:00 - 12:30", break: true },
+  { periodNo: 4, label: "Period 4", time: "12:30 - 13:30" },
+  { periodNo: 5, label: "Period 5", time: "13:30 - 14:30" },
+  { periodNo: 6, label: "Period 6", time: "14:30 - 15:30" },
 ];
 
 const Timetable = () => {
@@ -45,9 +54,7 @@ const Timetable = () => {
   const [message, setMessage] = useState("");
   const [saving, setSaving] = useState(false);
 
-  // =========================
-  // FETCH CLASSES + TEACHERS
-  // =========================
+  // FETCH DATA
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -66,9 +73,7 @@ const Timetable = () => {
     fetchData();
   }, []);
 
-  // =========================
-  // LOAD TIMETABLE ON CLASS CHANGE
-  // =========================
+  // LOAD CLASS
   const handleClassChange = async (e) => {
     const value = e.target.value;
     setClassId(value);
@@ -80,12 +85,8 @@ const Timetable = () => {
 
     try {
       const res = await axios.get(`/timetable/class/${value}`);
+      setTimetable(Array.isArray(res.data) ? res.data : []);
 
-      const data = Array.isArray(res.data) ? res.data : [];
-
-      setTimetable(data);
-
-      // reset periods when class changes
       setPeriods(
         PERIOD_SLOTS.map((p, i) => ({
           periodNo: i + 1,
@@ -102,16 +103,13 @@ const Timetable = () => {
     }
   };
 
-  // =========================
-  // LOAD DAY DATA (IMPORTANT FIX)
-  // =========================
+  // LOAD DAY DATA
   useEffect(() => {
     if (!classId || !day) return;
 
     const loadDayData = async () => {
       try {
         const res = await axios.get(`/timetable/class/${classId}`);
-
         const all = Array.isArray(res.data) ? res.data : [];
 
         const dayData = all.find((t) => t.day === day);
@@ -142,18 +140,13 @@ const Timetable = () => {
     loadDayData();
   }, [classId, day]);
 
-  // =========================
-  // UPDATE PERIOD
-  // =========================
   const updatePeriod = (index, field, value) => {
     const updated = [...periods];
     updated[index][field] = value;
     setPeriods(updated);
   };
 
-  // =========================
-  // SAVE TIMETABLE
-  // =========================
+  // SAVE
   const handleSubmit = async () => {
     if (!classId || !day) {
       return setMessage("Select class and day");
@@ -168,7 +161,7 @@ const Timetable = () => {
         periods: periods
           .filter((p) => !p.isBreak)
           .map((p, i) => ({
-            periodNo: i + 1, // 🔥 FIXED: ALWAYS 1-6
+            periodNo: i + 1,
             subject: p.subject,
             teacher: p.teacher,
             startTime: p.startTime,
@@ -178,7 +171,6 @@ const Timetable = () => {
 
       setMessage("Timetable saved successfully");
 
-      // reload after save
       const res = await axios.get(`/timetable/class/${classId}`);
       setTimetable(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
@@ -188,9 +180,19 @@ const Timetable = () => {
     }
   };
 
-  // =========================
-  // UI
-  // =========================
+  // BUILD MAP (IMPORTANT)
+  const timetableMap = {};
+
+  timetable.forEach((dayData) => {
+    const map = {};
+
+    dayData.periods.forEach((p) => {
+      map[p.periodNo] = p;
+    });
+
+    timetableMap[dayData.day] = map;
+  });
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-6xl mx-auto">
@@ -231,39 +233,36 @@ const Timetable = () => {
           </select>
         </div>
 
-        {/* PERIODS */}
+        {/* EDIT PERIODS (UNCHANGED) */}
         <div className="bg-white p-4 rounded shadow mb-6">
           <h2 className="font-bold mb-3">Fixed Period Structure</h2>
 
           {periods.map((p, i) => (
-            <div
-              key={i}
-              className="grid md:grid-cols-4 gap-2 mb-3 items-center"
-            >
-              {/* LABEL */}
+            <div key={i} className="grid md:grid-cols-4 gap-2 mb-3 items-center">
               <div className="font-semibold text-gray-600">
                 {PERIOD_SLOTS[i].label}
               </div>
 
-              {/* BREAK */}
               {p.isBreak ? (
                 <div className="col-span-3 text-center text-red-500 font-bold">
                   BREAK TIME ☕
                 </div>
               ) : (
                 <>
-                  {/* SUBJECT */}
                   <input
                     placeholder="Subject"
                     value={p.subject}
-                    onChange={(e) => updatePeriod(i, "subject", e.target.value)}
+                    onChange={(e) =>
+                      updatePeriod(i, "subject", e.target.value)
+                    }
                     className="border p-2 rounded"
                   />
 
-                  {/* TEACHER */}
                   <select
                     value={p.teacher}
-                    onChange={(e) => updatePeriod(i, "teacher", e.target.value)}
+                    onChange={(e) =>
+                      updatePeriod(i, "teacher", e.target.value)
+                    }
                     className="border p-2 rounded"
                   >
                     <option value="">Select Teacher</option>
@@ -274,7 +273,6 @@ const Timetable = () => {
                     ))}
                   </select>
 
-                  {/* TIME */}
                   <div className="text-sm text-gray-500">
                     {p.startTime} - {p.endTime}
                   </div>
@@ -284,7 +282,6 @@ const Timetable = () => {
           ))}
         </div>
 
-        {/* SAVE */}
         <button
           onClick={handleSubmit}
           disabled={saving}
@@ -293,24 +290,71 @@ const Timetable = () => {
           {saving ? "Saving..." : "Save Timetable"}
         </button>
 
-        {/* DISPLAY */}
-        <div className="mt-8">
-          <h2 className="text-xl font-bold mb-3">Saved Timetable</h2>
+        {/* ✅ NEW: SAME TABLE AS STUDENT VIEW */}
+        <div className="mt-10">
+          <h2 className="text-xl font-bold mb-4">📘 Saved Timetable</h2>
 
           {timetable.length === 0 ? (
             <p>No timetable found</p>
           ) : (
-            timetable.map((t) => (
-              <div key={t._id} className="bg-white p-4 rounded shadow mb-3">
-                <h3 className="font-bold">{t.day}</h3>
+            <div className="overflow-x-auto bg-white rounded-xl shadow border">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="bg-gray-100">
+                    <th className="p-3 border">Time</th>
+                    {DAYS.map((d) => (
+                      <th key={d} className="p-3 border">
+                        {d}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
 
-                {t.periods.map((p, i) => (
-                  <div key={i} className="text-sm text-gray-700">
-                    {p.subject} | {p.startTime} - {p.endTime}
-                  </div>
-                ))}
-              </div>
-            ))
+                <tbody>
+                  {TIME_SLOTS.map((slot, idx) => (
+                    <tr key={idx} className="text-center border">
+                      <td className="p-3 border bg-gray-50">
+                        <div className="font-semibold">{slot.label}</div>
+                        <div className="text-xs text-gray-500">
+                          {slot.time}
+                        </div>
+                      </td>
+
+                      {slot.break ? (
+                        <td
+                          colSpan={6}
+                          className="p-4 bg-yellow-100 font-bold text-yellow-800"
+                        >
+                          🍱 BREAK TIME
+                        </td>
+                      ) : (
+                        DAYS.map((day) => {
+                          const period =
+                            timetableMap?.[day]?.[slot.periodNo];
+
+                          return (
+                            <td key={day} className="p-3 border">
+                              {period ? (
+                                <div>
+                                  <p className="font-semibold">
+                                    {period.subject}
+                                  </p>
+                                  <p className="text-xs text-gray-500">
+                                    {period.teacher?.name || "Teacher"}
+                                  </p>
+                                </div>
+                              ) : (
+                                <span className="text-gray-300">-</span>
+                              )}
+                            </td>
+                          );
+                        })
+                      )}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
       </div>
