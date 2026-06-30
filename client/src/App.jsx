@@ -39,6 +39,8 @@ import MyClasses from "./pages/Teacher/Myclasses";
 import ClassDetails from "./pages/Teacher/ClassDetails";
 import TeacherAttendance from "./pages/Teacher/TeacherAttendance";
 import TeacherTimetable from "./pages/Teacher/TeacherTimetable";
+import TeacherAnnouncement from "./pages/Teacher/TeacherAnnouncements";
+
 
 function App() {
   return (
@@ -116,6 +118,8 @@ function App() {
         <Route path="classes/:id" element={<ClassDetails />}/>
         <Route path="attendance" element={<TeacherAttendance />}/>
         <Route path="timetable" element={<TeacherTimetable />}/>
+        <Route path="Announcements" element={<TeacherAnnouncement />}/>
+
       </Route>
     </Routes>
   );
