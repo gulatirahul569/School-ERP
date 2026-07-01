@@ -40,7 +40,7 @@ const Register = () => {
         className="absolute inset-0 bg-cover bg-center hidden sm:block"
         style={{
           backgroundImage:
-            "url('https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?fm=jpg&q=60&w=3000&auto=format&fit=crop')",
+            "url('https://images.pexels.com/photos/8617938/pexels-photo-8617938.jpeg ')",
         }}
       />
 
@@ -48,7 +48,7 @@ const Register = () => {
         className="absolute inset-0 bg-cover bg-center block sm:hidden"
         style={{
           backgroundImage:
-            "url('https://images.pexels.com/photos/8485650/pexels-photo-8485650.jpeg')",
+            "url('https://images.pexels.com/photos/37795369/pexels-photo-37795369.jpeg')",
         }}
       />
 

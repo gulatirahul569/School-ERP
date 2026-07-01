@@ -58,7 +58,7 @@ const Login = () => {
         className="absolute inset-0 bg-cover bg-center hidden sm:block"
         style={{
           backgroundImage:
-            "url('https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?auto=format&fit=crop&w=3000')",
+            "url('https://images.pexels.com/photos/8423020/pexels-photo-8423020.jpeg')",
         }}
       />
 
@@ -67,7 +67,7 @@ const Login = () => {
         className="absolute inset-0 bg-cover bg-center block sm:hidden"
         style={{
           backgroundImage:
-            "url('https://images.pexels.com/photos/8485650/pexels-photo-8485650.jpeg')",
+            "url('https://images.pexels.com/photos/6936077/pexels-photo-6936077.jpeg')",
         }}
       />
 
