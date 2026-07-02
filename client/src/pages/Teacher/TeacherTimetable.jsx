@@ -42,19 +42,25 @@ const TeacherTimetable = () => {
   }, []);
 
   // Create timetable map
+  // NOTE: The API returns ONE document per (class, day) pair, filtered to
+  // this teacher's periods within that class. A teacher can appear in
+  // multiple documents for the SAME day (e.g. Period 1 for Class 9-A and
+  // Period 2 for Class 10-B, both on Monday). So we must MERGE periods
+  // into the existing day map instead of replacing it, or earlier classes
+  // for that day get wiped out.
   const timetableMap = {};
 
   timetable.forEach((dayData) => {
-    const map = {};
+    if (!timetableMap[dayData.day]) {
+      timetableMap[dayData.day] = {};
+    }
 
     dayData.periods.forEach((period) => {
-      map[period.periodNo] = {
+      timetableMap[dayData.day][period.periodNo] = {
         ...period,
         classId: dayData.classId,
       };
     });
-
-    timetableMap[dayData.day] = map;
   });
 
   if (loading) {

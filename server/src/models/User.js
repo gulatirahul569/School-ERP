@@ -37,6 +37,16 @@ const userSchema = new mongoose.Schema(
       default: "",
     },
 
+    dateOfBirth: {
+      type: Date,
+      default: null,
+    },
+
+    address: {
+      type: String,
+      default: "",
+    },
+
     isActive: {
       type: Boolean,
       default: true,
