@@ -108,6 +108,14 @@ The client runs on Vite's default port (`http://localhost:5173`) and the API on 
 
 All routes except `/api/auth/login` require a `Bearer` JWT and enforce role-based access.
 
+## Roadmap
+ 
+- [ ] Exam & results / grading module
+- [ ] Parent portal backend endpoints
+- [ ] Fee management
+- [ ] Notifications
+- [ ] Deployment guide (Docker / cloud hosting)
+
 
 ## Contributing
 
