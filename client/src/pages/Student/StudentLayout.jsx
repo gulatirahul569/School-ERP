@@ -99,6 +99,7 @@ const StudentLayout = () => {
           {navItem("/student/attendance", "📝 Attendance")}
           {navItem("/student/timetable", "📅 Timetable")}
           {navItem("/student/announcements", "📢 Announcements")}
+          {navItem("/student/result", "🎓 Result")}
           {navItem("/student/profile", "👤 My Profile")}
         </nav>
 

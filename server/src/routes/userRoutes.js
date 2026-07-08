@@ -102,6 +102,98 @@ router.get(
 );
 
 // =======================
+// ADMIN: UPDATE USER (student / teacher / parent)
+// =======================
+// Lets admin fix wrong details after creation. Password is optional here -
+// only touched if the admin actually typed a new one.
+router.put("/:id", protect, authorizeRoles("admin"), async (req, res) => {
+  try {
+    const {
+      name,
+      email,
+      password,
+      classId,
+      phone,
+      dateOfBirth,
+      address,
+      isActive,
+    } = req.body;
+
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // If email is being changed, make sure it's not already taken
+    if (email && email !== user.email) {
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
+        return res.status(400).json({
+          success: false,
+          message: "A user with this email already exists",
+        });
+      }
+      user.email = email;
+    }
+
+    if (name !== undefined) user.name = name;
+    if (phone !== undefined) user.phone = phone;
+    if (dateOfBirth !== undefined) user.dateOfBirth = dateOfBirth || null;
+    if (address !== undefined) user.address = address;
+    if (classId !== undefined) user.classId = classId || null;
+    if (isActive !== undefined) user.isActive = isActive;
+
+    if (password) {
+      user.password = await bcrypt.hash(password, 10);
+    }
+
+    await user.save();
+
+    const { password: _omit, ...userWithoutPassword } = user.toObject();
+
+    res.json({
+      success: true,
+      message: "User updated successfully",
+      data: userWithoutPassword,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+});
+
+// =======================
+// ADMIN: DELETE USER
+// =======================
+router.delete("/:id", protect, authorizeRoles("admin"), async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "User deleted successfully",
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+});
+
+// =======================
 // ADMIN DASHBOARD
 // =======================
 router.get("/admin", protect, authorizeRoles("admin"), (req, res) => {
@@ -129,11 +221,34 @@ router.get(
 // =======================
 // PROFILE (ALL USERS)
 // =======================
-router.get("/profile", protect, (req, res) => {
-  res.json({
-    message: "User Profile",
-    user: req.user,
-  });
+// req.user (set by the auth middleware) only carries a trimmed subset of
+// fields, so we re-fetch the full record here - this is what makes phone,
+// dateOfBirth, address, etc. (the details an admin fills in) show up on
+// the student's own profile page.
+router.get("/profile", protect, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id)
+      .select("-password")
+      .populate("classId", "name section");
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "User Profile",
+      user,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
 });
 
 // =======================

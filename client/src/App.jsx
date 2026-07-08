@@ -25,6 +25,7 @@ import StudentAttendance from "./pages/Student/StudentAttendance";
 import StudentTimetable from "./pages/Student/StudentTimetable";
 import StudentAnnouncements from "./pages/Student/StudentAnnouncements";
 import StudentProfile from "./pages/Student/StudentProfile";
+import Result2 from "./pages/Student/Result2";
 
 // teacher pages
 
@@ -40,6 +41,7 @@ import ClassDetails from "./pages/Teacher/ClassDetails";
 import TeacherAttendance from "./pages/Teacher/TeacherAttendance";
 import TeacherTimetable from "./pages/Teacher/TeacherTimetable";
 import TeacherAnnouncement from "./pages/Teacher/TeacherAnnouncements";
+import Result from "./pages/Teacher/Result";
 
 
 function App() {
@@ -103,6 +105,7 @@ function App() {
         <Route path="announcements" element={<StudentAnnouncements />} />
 
         <Route path="profile" element={<StudentProfile />} />
+        <Route path="result" element={<Result2 />} />
       </Route>
 
       <Route
@@ -119,6 +122,7 @@ function App() {
         <Route path="attendance" element={<TeacherAttendance />}/>
         <Route path="timetable" element={<TeacherTimetable />}/>
         <Route path="Announcements" element={<TeacherAnnouncement />}/>
+        <Route path="result" element={<Result />}/>
 
       </Route>
     </Routes>
