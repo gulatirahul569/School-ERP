@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "../../services/api";
+import { SUBJECTS } from "../../constants/subjects";
 
 const DAYS = [
   "Monday",
@@ -233,7 +234,7 @@ const Timetable = () => {
           </select>
         </div>
 
-        {/* EDIT PERIODS (UNCHANGED) */}
+        {/* EDIT PERIODS */}
         <div className="bg-white p-4 rounded shadow mb-6">
           <h2 className="font-bold mb-3">Fixed Period Structure</h2>
 
@@ -249,28 +250,36 @@ const Timetable = () => {
                 </div>
               ) : (
                 <>
-                  <input
-                    placeholder="Subject"
+                  <select
                     value={p.subject}
-                    onChange={(e) =>
-                      updatePeriod(i, "subject", e.target.value)
-                    }
+                    onChange={(e) => {
+                      const updated = [...periods];
+                      updated[i].subject = e.target.value;
+                      updated[i].teacher = ""; // reset teacher since it may not match the new subject
+                      setPeriods(updated);
+                    }}
                     className="border p-2 rounded"
-                  />
+                  >
+                    <option value="">Select Subject</option>
+                    {SUBJECTS.map((s) => (
+                      <option key={s} value={s}>{s}</option>
+                    ))}
+                  </select>
 
                   <select
                     value={p.teacher}
-                    onChange={(e) =>
-                      updatePeriod(i, "teacher", e.target.value)
-                    }
+                    onChange={(e) => updatePeriod(i, "teacher", e.target.value)}
                     className="border p-2 rounded"
+                    disabled={!p.subject}
                   >
-                    <option value="">Select Teacher</option>
-                    {teachers.map((t) => (
-                      <option key={t._id} value={t._id}>
-                        {t.name}
-                      </option>
-                    ))}
+                    <option value="">
+                      {p.subject ? "Select Teacher" : "Select subject first"}
+                    </option>
+                    {teachers
+                      .filter((t) => t.subjects?.includes(p.subject))
+                      .map((t) => (
+                        <option key={t._id} value={t._id}>{t.name}</option>
+                      ))}
                   </select>
 
                   <div className="text-sm text-gray-500">
@@ -290,7 +299,7 @@ const Timetable = () => {
           {saving ? "Saving..." : "Save Timetable"}
         </button>
 
-        {/* ✅ NEW: SAME TABLE AS STUDENT VIEW */}
+        {/* ✅ SAME TABLE AS STUDENT VIEW */}
         <div className="mt-10">
           <h2 className="text-xl font-bold mb-4">📘 Saved Timetable</h2>
 

@@ -84,6 +84,7 @@ const TeacherLayout = () => {
           {navItem("/teacher", "🏠 Dashboard")}
           {navItem("/teacher/classes", "🏫 My Classes")}
           {navItem("/teacher/Result", "🎓 Result")}
+          {navItem("/teacher/fees", "💰 Fees")}
           {navItem("/teacher/attendance", "📝 Attendance")}
           {navItem("/teacher/timetable", "📅 Timetable")}
           {navItem("/teacher/announcements", "📢 Announcements")}

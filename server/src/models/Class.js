@@ -18,6 +18,11 @@ const classSchema = new mongoose.Schema(
       default: null,
     },
 
+    totalFee: {
+      type: Number,
+      default: 0,
+    },
+
     students: [
       {
         type: mongoose.Schema.Types.ObjectId,

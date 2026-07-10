@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "../../services/api";
+import { SUBJECTS } from "../../constants/subjects";
 
 const EMPTY_FORM = {
   name: "",
@@ -8,6 +9,7 @@ const EMPTY_FORM = {
   dateOfBirth: "",
   address: "",
   phone: "",
+  subjects: [],
 };
 
 // Turns "2024-05-01T00:00:00.000Z" into "2024-05-01" so it can sit inside
@@ -18,6 +20,9 @@ const toDateInputValue = (value) => {
   if (Number.isNaN(d.getTime())) return "";
   return d.toISOString().split("T")[0];
 };
+
+const toggleSubject = (list, subject) =>
+  list.includes(subject) ? list.filter((s) => s !== subject) : [...list, subject];
 
 const AdminTeachers = () => {
   const [teachers, setTeachers] = useState([]);
@@ -105,6 +110,7 @@ const AdminTeachers = () => {
       dateOfBirth: toDateInputValue(target.dateOfBirth),
       address: target.address || "",
       phone: target.phone || "",
+      subjects: target.subjects || [],
     });
     setEditError("");
     setIsEditing(true);
@@ -287,6 +293,24 @@ const AdminTeachers = () => {
                 className="w-full p-2 border rounded"
                 placeholder="Home address"
               />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">Subjects Taught</label>
+            <div className="flex flex-wrap gap-2">
+              {SUBJECTS.map((s) => (
+                <label key={s} className="flex items-center gap-1 text-sm border px-2 py-1 rounded">
+                  <input
+                    type="checkbox"
+                    checked={formData.subjects.includes(s)}
+                    onChange={() =>
+                      setFormData({ ...formData, subjects: toggleSubject(formData.subjects, s) })
+                    }
+                  />
+                  {s}
+                </label>
+              ))}
             </div>
           </div>
 
@@ -478,6 +502,27 @@ const AdminTeachers = () => {
                   />
                 </div>
 
+                <div>
+                  <label className="block text-sm font-medium mb-1">Subjects Taught</label>
+                  <div className="flex flex-wrap gap-2">
+                    {SUBJECTS.map((s) => (
+                      <label key={s} className="flex items-center gap-1 text-sm border px-2 py-1 rounded">
+                        <input
+                          type="checkbox"
+                          checked={editFormData.subjects.includes(s)}
+                          onChange={() =>
+                            setEditFormData({
+                              ...editFormData,
+                              subjects: toggleSubject(editFormData.subjects, s),
+                            })
+                          }
+                        />
+                        {s}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
                 <div className="flex gap-2 pt-2">
                   <button
                     type="submit"
@@ -508,6 +553,7 @@ const AdminTeachers = () => {
                       : "—"}
                   </p>
                   <p><b>Address:</b> {selectedTeacher.address || "—"}</p>
+                  <p><b>Subjects:</b> {selectedTeacher.subjects?.length ? selectedTeacher.subjects.join(", ") : "—"}</p>
                   <p><b>Role:</b> teacher</p>
                 </div>
 

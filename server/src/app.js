@@ -9,9 +9,11 @@ const adminRoutes = require("./routes/adminRoutes");
 const announcementRoutes = require("./routes/announcementRoutes");
 const teacherRoutes = require("./routes/teacherRoutes");
 const resultRoutes = require("./routes/resultRoutes");
+const feeRoutes = require("./routes/feeRoutes");
 
 const app = express();
 const authRoutes = require("./routes/authRoutes");
+
 
 // connect database
 connectDB();
@@ -31,5 +33,6 @@ app.use("/api/announcement", announcementRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/teacher", teacherRoutes);
 app.use("/api/result", resultRoutes);
+app.use("/api/fee", feeRoutes);
 
 module.exports = app;

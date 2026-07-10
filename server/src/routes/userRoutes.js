@@ -23,6 +23,7 @@ router.post("/", protect, authorizeRoles("admin"), async (req, res) => {
       phone,
       dateOfBirth,
       address,
+      subjects,
     } = req.body;
 
     if (!name || !email || !password || !role) {
@@ -59,6 +60,7 @@ router.post("/", protect, authorizeRoles("admin"), async (req, res) => {
       phone: phone || "",
       dateOfBirth: dateOfBirth || null,
       address: address || "",
+      subjects: subjects || [],
     });
 
     const { password: _omit, ...userWithoutPassword } = user.toObject();
@@ -117,6 +119,7 @@ router.put("/:id", protect, authorizeRoles("admin"), async (req, res) => {
       dateOfBirth,
       address,
       isActive,
+      subjects,
     } = req.body;
 
     const user = await User.findById(req.params.id);
@@ -145,6 +148,7 @@ router.put("/:id", protect, authorizeRoles("admin"), async (req, res) => {
     if (address !== undefined) user.address = address;
     if (classId !== undefined) user.classId = classId || null;
     if (isActive !== undefined) user.isActive = isActive;
+    if (subjects !== undefined) user.subjects = subjects;
 
     if (password) {
       user.password = await bcrypt.hash(password, 10);

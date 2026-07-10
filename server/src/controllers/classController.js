@@ -1,5 +1,6 @@
 const Class = require("../models/Class");
 const User = require("../models/User");
+const { _generateFeesForStudent: generateFeesForStudent } = require("./feeController");
 
 // =======================
 // CREATE CLASS
@@ -134,6 +135,9 @@ exports.assignStudentToClass = async (req, res) => {
 
     await classData.save();
     await student.save();
+    if (classData.totalFee > 0) {
+      await generateFeesForStudent(studentId, classData);
+    }
 
     res.status(200).json({
       success: true,

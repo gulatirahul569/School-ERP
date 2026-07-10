@@ -98,6 +98,7 @@ const StudentLayout = () => {
           {navItem("/student", "🏠 Dashboard")}
           {navItem("/student/attendance", "📝 Attendance")}
           {navItem("/student/timetable", "📅 Timetable")}
+          {navItem("/student/fees", "💰 My Fees")}
           {navItem("/student/announcements", "📢 Announcements")}
           {navItem("/student/result", "🎓 Result")}
           {navItem("/student/profile", "👤 My Profile")}

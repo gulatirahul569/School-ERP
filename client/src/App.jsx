@@ -42,6 +42,9 @@ import TeacherAttendance from "./pages/Teacher/TeacherAttendance";
 import TeacherTimetable from "./pages/Teacher/TeacherTimetable";
 import TeacherAnnouncement from "./pages/Teacher/TeacherAnnouncements";
 import Result from "./pages/Teacher/Result";
+import AdminFees from "./pages/Admin/AdminFees";
+import StudentFees from "./pages/Student/StudentFees";
+import TeacherFees from "./pages/Teacher/TeacherFees";
 
 
 function App() {
@@ -80,6 +83,7 @@ function App() {
         <Route path="teacher" element={<AdminTeachers />} />
 
         <Route path="student" element={<AdminStudents />} />
+        <Route path="fees" element={<AdminFees />} /> 
       </Route>
 
       {/* ========================= */}
@@ -103,6 +107,7 @@ function App() {
         <Route path="timetable" element={<StudentTimetable />} />
 
         <Route path="announcements" element={<StudentAnnouncements />} />
+        <Route path="fees" element={<StudentFees />} /> 
 
         <Route path="profile" element={<StudentProfile />} />
         <Route path="result" element={<Result2 />} />
@@ -122,6 +127,7 @@ function App() {
         <Route path="attendance" element={<TeacherAttendance />}/>
         <Route path="timetable" element={<TeacherTimetable />}/>
         <Route path="Announcements" element={<TeacherAnnouncement />}/>
+        <Route path="fees" element={<TeacherFees />} />
         <Route path="result" element={<Result />}/>
 
       </Route>

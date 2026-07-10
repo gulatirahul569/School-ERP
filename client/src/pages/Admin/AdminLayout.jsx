@@ -98,6 +98,7 @@ const AdminLayout = () => {
           {navItem("/admin", "📊 Dashboard")}
           {navItem("/admin/classes", "🏫 Class Management")}
           {navItem("/admin/attendance", "📝 Attendance")}
+          {navItem("/admin/fees", "💰 Fees")}
           {navItem("/admin/announcement", "📢 Announcements")}
           {navItem("/admin/timetable", "📅 Timetable")}
 

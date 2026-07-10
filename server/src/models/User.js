@@ -51,6 +51,11 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+
+    subjects: {
+      type: [String],
+      default: [],
+    },
   },
   { timestamps: true }
 );
