@@ -69,9 +69,9 @@ const StudentTimetable = () => {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 space-y">
       {/* HEADER */}
-      <div className="bg-linear-to-r from-indigo-500 to-purple-600 text-white p-6 rounded-2xl">
+      <div className=" text-black pl-6 pr-6 text-center">
         <h1 className="text-2xl font-bold">📅 Weekly Timetable</h1>
         <p className="text-white/80 text-sm">
           Fixed period schedule (with break)
@@ -82,7 +82,7 @@ const StudentTimetable = () => {
       <div className="overflow-x-auto bg-white rounded-2xl shadow border">
         <table className="w-full border-collapse">
           <thead>
-            <tr className="bg-gray-100">
+            <tr className="bg-gray-300">
               <th className="p-3 border">Time</th>
 
               {DAYS.map((day) => (
@@ -97,7 +97,7 @@ const StudentTimetable = () => {
             {TIME_SLOTS.map((slot, index) => (
               <tr key={index} className="text-center border">
                 {/* TIME COLUMN */}
-                <td className="p-3 font-semibold border bg-gray-50">
+                <td className="p-3 font-semibold border bg-gray-100">
                   <div>{slot.label}</div>
                   <div className="text-xs text-gray-500">{slot.time}</div>
                 </td>
@@ -106,7 +106,7 @@ const StudentTimetable = () => {
                 {slot.break ? (
                   <td
                     colSpan={6}
-                    className="p-4 bg-yellow-100 text-yellow-800 font-bold"
+                    className="p-4 bg-yellow-100 text-yellow-700 font-bold"
                   >
                     🍱 BREAK TIME (30 MIN)
                   </td>

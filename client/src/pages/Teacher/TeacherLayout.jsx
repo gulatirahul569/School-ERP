@@ -13,28 +13,27 @@ const TeacherLayout = () => {
     <Link
       to={to}
       onClick={() => setSidebarOpen(false)}
-      className={`flex items-center p-3 rounded-xl transition font-medium ${
-        isActive(to)
-          ? "bg-indigo-100 text-indigo-700"
-          : "text-gray-600 hover:bg-gray-100"
-      }`}
+      className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition text-sm font-medium ${isActive(to)
+          ? "bg-white text-indigo-600 shadow-sm"
+          : "text-indigo-100/70 hover:bg-white/10 hover:text-white"
+        }`}
     >
       {label}
     </Link>
   );
 
   return (
-    <div className="min-h-screen bg-[#F6F7FC]">
+    <div className="min-h-screen bg-[#F4F6FB]">
 
       {/* MOBILE HEADER */}
-      <div className="md:hidden bg-white border-b flex items-center justify-between p-4 sticky top-0 z-50">
-        <h2 className="font-bold text-lg text-gray-800">
-          Teacher Portal
+      <div className="md:hidden bg-[#1E2340] flex items-center justify-between p-4 sticky top-0 z-50">
+        <h2 className="font-bold text-lg text-white">
+          👨‍🏫 Teacher Portal
         </h2>
 
         <button
           onClick={() => setSidebarOpen(true)}
-          className="text-2xl"
+          className="text-2xl text-white"
         >
           ☰
         </button>
@@ -44,15 +43,15 @@ const TeacherLayout = () => {
       {sidebarOpen && (
         <div
           className="fixed inset-0 bg-black/40 z-40 md:hidden"
-          onClick={() => setSidebarOpen(false)}Details
+          onClick={() => setSidebarOpen(false)} Details
         />
       )}
 
       {/* SIDEBAR */}
       <aside
         className={`
-          fixed top-0 left-0 h-screen w-80
-          bg-white border-r border-gray-200
+          fixed top-0 left-0 h-screen w-64
+          bg-[#1E2340]
           p-5 z-50
           transform transition-transform duration-300
           ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
@@ -60,24 +59,24 @@ const TeacherLayout = () => {
         `}
       >
         {/* LOGO */}
-        <div className="hidden md:flex items-center gap-3 mb-8">
-          <div className="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center text-xl">
+        <div className="hidden md:flex items-center gap-3 mb-8 px-1">
+          <div className="w-11 h-11 rounded-xl bg-white/10 flex items-center justify-center text-xl">
             👨‍🏫
           </div>
 
           <div>
-            <h2 className="text-2xl font-bold text-gray-800">
+            <h2 className="text-lg font-bold text-white">
               Teacher Portal
             </h2>
-            <p className="text-sm text-gray-500">
+            <p className="text-xs text-indigo-200/70">
               School ERP
             </p>
           </div>
         </div>
 
         {/* MENU */}
-        <nav className="space-y-2">
-          <p className="text-xs font-semibold text-gray-400 uppercase mb-2">
+        <nav className="space-y-1.5">
+          <p className="text-xs font-semibold text-indigo-200/50 uppercase mb-2 px-3.5 tracking-wide">
             Menu
           </p>
 
@@ -90,24 +89,24 @@ const TeacherLayout = () => {
           {navItem("/teacher/announcements", "📢 Announcements")}
         </nav>
 
-        {/* USER */}
-        <div className="absolute bottom-5 left-5 right-5">
-          <div className="bg-gray-50 border rounded-2xl p-4">
-            <p className="text-xs text-gray-400 mb-1">
+        {/* USER CARD */}
+        <div className="absolute bottom-5 left-1/2 -translate-x-1/2">
+          <div className="w-52 bg-white/5 border border-white/10 rounded-xl pl-3 pr-3 pb-2 pt-2">
+            <p className="text-[10px] text-indigo-200/50">
               Logged in as
             </p>
 
-            <p className="font-semibold text-gray-800 truncate">
+            <p className="mt-1 text-sm font-semibold text-white truncate">
               {user?.name}
             </p>
 
-            <p className="text-sm text-gray-500 truncate">
+            <p className="text-[11px] text-indigo-200/60 truncate">
               {user?.email}
             </p>
 
             <button
               onClick={logout}
-              className="mt-4 w-full bg-red-500 text-white p-2 rounded-xl hover:bg-red-600"
+              className="mt-3 w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg transition text-xs font-medium"
             >
               Logout
             </button>
@@ -116,7 +115,7 @@ const TeacherLayout = () => {
       </aside>
 
       {/* CONTENT */}
-      <main className="md:ml-80 p-6 min-h-screen bg-[#F6F7FC]">
+      <main className="md:ml-64 p-6 min-h-screen bg-[#F4F6FB]">
         <Outlet />
       </main>
     </div>

@@ -117,24 +117,32 @@ const AdminDashboard = () => {
     },
   ];
 
-  const COLORS = ["#818CF8", "#FCD34D"];
+  const COLORS = ["#6366F1", "#FBBF24"];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 bg-[#F4F6FB] p-6 rounded-3xl">
       {/* HEADER */}
 
       <div className="flex flex-col md:flex-row justify-between items-center gap-4">
         <div>
-          <h1 className="text-4xl font-bold text-gray-800">
-            School Management Dashboard
+          <h1 className="text-3xl font-bold text-gray-800">
+            Dashboard
           </h1>
 
-          <p className="text-gray-500 mt-2">
+          <p className="text-gray-400 mt-1 text-sm">
             Welcome back, Admin 👋
           </p>
         </div>
 
-        
+        <div className="flex items-center gap-3 bg-white rounded-full px-4 py-2.5 shadow-sm w-full md:w-auto">
+          <span className="text-gray-400">🔍</span>
+          <input
+            type="text"
+            placeholder="Search for students/teachers/documents..."
+            className="bg-transparent outline-none text-sm text-gray-500 w-full md:w-72"
+            disabled
+          />
+        </div>
       </div>
 
       {/* STATS */}
@@ -143,22 +151,22 @@ const AdminDashboard = () => {
         {cards.map((card, index) => (
           <div
             key={index}
-            className={`${card.color} rounded-3xl p-6`}
+            className="bg-white rounded-2xl p-5 shadow-sm flex items-center gap-4"
           >
-            <div className="flex justify-between">
-              <div>
-                <p className="text-gray-600">
-                  {card.title}
-                </p>
+            <div
+              className={`${card.color} w-12 h-12 rounded-xl flex items-center justify-center text-2xl shrink-0`}
+            >
+              {card.icon}
+            </div>
 
-                <h2 className="text-4xl font-bold mt-3 text-gray-800">
-                  {card.value}
-                </h2>
-              </div>
+            <div>
+              <p className="text-gray-400 text-sm">
+                {card.title}
+              </p>
 
-              <div className="text-3xl">
-                {card.icon}
-              </div>
+              <h2 className="text-2xl font-bold text-gray-800">
+                {card.value}
+              </h2>
             </div>
           </div>
         ))}
@@ -172,23 +180,46 @@ const AdminDashboard = () => {
         <div className="lg:col-span-2 space-y-6">
           {/* OVERVIEW */}
 
-          <div className="bg-white rounded-3xl p-6 shadow-sm">
-            <h2 className="font-semibold text-xl mb-5">
-              School Overview
-            </h2>
+          <div className="bg-white rounded-2xl p-6 shadow-sm">
+            <div className="flex justify-between items-center mb-5">
+              <h2 className="font-semibold text-lg text-gray-800">
+                School Overview
+              </h2>
+
+              <div className="flex items-center gap-2 text-xs text-gray-400">
+                <span className="w-2.5 h-2.5 rounded-full bg-indigo-500 inline-block"></span>
+                Overview
+              </div>
+            </div>
 
             <ResponsiveContainer
               width="100%"
-              height={320}
+              height={300}
             >
-              <BarChart data={overviewData}>
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
+              <BarChart data={overviewData} barSize={36}>
+                <XAxis
+                  dataKey="name"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fill: "#9CA3AF", fontSize: 12 }}
+                />
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fill: "#9CA3AF", fontSize: 12 }}
+                />
+                <Tooltip
+                  cursor={{ fill: "#F3F4F6" }}
+                  contentStyle={{
+                    borderRadius: "12px",
+                    border: "none",
+                    boxShadow: "0 2px 10px rgba(0,0,0,0.08)",
+                  }}
+                />
 
                 <Bar
                   dataKey="value"
-                  fill="#818CF8"
+                  fill="#6366F1"
                   radius={[8, 8, 0, 0]}
                 />
               </BarChart>
@@ -197,13 +228,13 @@ const AdminDashboard = () => {
 
           {/* ATTENDANCE */}
 
-          <div className="bg-white rounded-3xl p-6 shadow-sm">
-            <h2 className="font-semibold text-xl mb-5">
+          <div className="bg-white rounded-2xl p-6 shadow-sm">
+            <h2 className="font-semibold text-lg text-gray-800 mb-5">
               Today's Attendance
             </h2>
 
             <div className="grid md:grid-cols-2 gap-6 items-center">
-              <div className="h-70">
+              <div className="h-64">
                 <ResponsiveContainer>
                   <PieChart>
                     <Pie
@@ -229,27 +260,37 @@ const AdminDashboard = () => {
                       )}
                     </Pie>
 
-                    <Tooltip />
+                    <Tooltip
+                      contentStyle={{
+                        borderRadius: "12px",
+                        border: "none",
+                        boxShadow: "0 2px 10px rgba(0,0,0,0.08)",
+                      }}
+                    />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
 
-              <div className="space-y-5">
+              <div className="space-y-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-4 h-4 bg-indigo-400 rounded-full"></div>
+                  <div className="w-3.5 h-3.5 bg-indigo-500 rounded-full"></div>
 
-                  <span className="font-medium">
+                  <span className="font-medium text-gray-700">
                     Present :{" "}
-                    {attendanceData[0].value}
+                    <span className="text-gray-900 font-semibold">
+                      {attendanceData[0].value}%
+                    </span>
                   </span>
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <div className="w-4 h-4 bg-yellow-400 rounded-full"></div>
+                  <div className="w-3.5 h-3.5 bg-yellow-400 rounded-full"></div>
 
-                  <span className="font-medium">
+                  <span className="font-medium text-gray-700">
                     Absent :{" "}
-                    {attendanceData[1].value}
+                    <span className="text-gray-900 font-semibold">
+                      {attendanceData[1].value}%
+                    </span>
                   </span>
                 </div>
               </div>
@@ -262,72 +303,84 @@ const AdminDashboard = () => {
         <div className="space-y-6">
           {/* DATE */}
 
-          <div className="bg-white rounded-3xl p-6 shadow-sm">
-            <h2 className="font-semibold text-xl">
+          <div className="bg-white rounded-2xl p-6 shadow-sm">
+            <h2 className="font-semibold text-lg text-gray-800">
               Today's Date
             </h2>
 
-            <p className="text-gray-500 mt-2">
+            <p className="text-gray-400 mt-2 text-sm">
               {new Date().toDateString()}
             </p>
           </div>
 
           {/* QUICK ACTIONS */}
 
-          <div className="bg-white rounded-3xl p-6 shadow-sm">
-            <h2 className="font-semibold text-xl mb-4">
+          <div className="bg-white rounded-2xl p-6 shadow-sm">
+            <h2 className="font-semibold text-lg text-gray-800 mb-4">
               Quick Actions
             </h2>
 
-            <div className="grid gap-3">
+            <div className="grid gap-2.5">
               <a
                 href="/admin/student"
-                className="bg-indigo-50 hover:bg-indigo-100 p-4 rounded-xl transition"
+                className="flex items-center gap-3 bg-[#F5F6FE] hover:bg-indigo-100 p-3.5 rounded-xl transition text-gray-700 text-sm font-medium"
               >
-                🎓 Manage Students
+                <span className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center">
+                  🎓
+                </span>
+                Manage Students
               </a>
 
               <a
                 href="/admin/teacher"
-                className="bg-indigo-50 hover:bg-indigo-100 p-4 rounded-xl transition"
+                className="flex items-center gap-3 bg-[#F5F6FE] hover:bg-indigo-100 p-3.5 rounded-xl transition text-gray-700 text-sm font-medium"
               >
-                👨‍🏫 Manage Teachers
+                <span className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center">
+                  👨‍🏫
+                </span>
+                Manage Teachers
               </a>
 
               <a
                 href="/admin/attendance"
-                className="bg-indigo-50 hover:bg-indigo-100 p-4 rounded-xl transition"
+                className="flex items-center gap-3 bg-[#F5F6FE] hover:bg-indigo-100 p-3.5 rounded-xl transition text-gray-700 text-sm font-medium"
               >
-                📝 Attendance
+                <span className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center">
+                  📝
+                </span>
+                Attendance
               </a>
 
               <a
                 href="/admin/timetable"
-                className="bg-indigo-50 hover:bg-indigo-100 p-4 rounded-xl transition"
+                className="flex items-center gap-3 bg-[#F5F6FE] hover:bg-indigo-100 p-3.5 rounded-xl transition text-gray-700 text-sm font-medium"
               >
-                📅 Timetable
+                <span className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center">
+                  📅
+                </span>
+                Timetable
               </a>
             </div>
           </div>
 
           {/* ANNOUNCEMENTS */}
 
-          <div className="bg-white rounded-3xl p-6 shadow-sm">
+          <div className="bg-white rounded-2xl p-6 shadow-sm">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="font-semibold text-xl">
+              <h2 className="font-semibold text-lg text-gray-800">
                 Announcements
               </h2>
 
               <a
                 href="/admin/announcement"
-                className="text-indigo-600 text-sm"
+                className="text-indigo-500 text-sm font-medium"
               >
                 View All
               </a>
             </div>
 
             {announcements.length === 0 ? (
-              <p className="text-gray-500">
+              <p className="text-gray-400 text-sm">
                 No announcements available
               </p>
             ) : (
@@ -335,17 +388,17 @@ const AdminDashboard = () => {
                 {announcements.map((item) => (
                   <div
                     key={item._id}
-                    className="border rounded-xl p-4"
+                    className="border border-gray-100 rounded-xl p-4 hover:bg-gray-50 transition"
                   >
-                    <h3 className="font-semibold text-gray-800">
+                    <h3 className="font-semibold text-gray-800 text-sm">
                       {item.title}
                     </h3>
 
-                    <p className="text-sm text-gray-500 mt-1 line-clamp-2">
+                    <p className="text-sm text-gray-400 mt-1 line-clamp-2">
                       {item.message}
                     </p>
 
-                    <p className="text-xs text-gray-400 mt-2">
+                    <p className="text-xs text-gray-300 mt-2">
                       {new Date(
                         item.createdAt
                       ).toLocaleDateString()}

@@ -6,7 +6,7 @@ import "react-calendar/dist/Calendar.css";
 const StudentAttendance = () => {
   const [attendance, setAttendance] = useState([]);
   const [stats, setStats] = useState(null);
-  const [selectedDate, setSelectedDate] = useState(new Date()); // ✅ FIX 1
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,28 +30,26 @@ const StudentAttendance = () => {
     fetchData();
   }, []);
 
-  // MAP attendance
   const attendanceMap = {};
+
   attendance.forEach((item) => {
     attendanceMap[item.date] = item.status;
   });
 
-  // Calendar colors
   const getTileClass = ({ date }) => {
     const d = date.toISOString().split("T")[0];
 
     if (attendanceMap[d] === "present") {
-      return "bg-green-500 text-green-700 rounded-lg";
+      return "bg-green-100 text-green-700 rounded-lg";
     }
 
     if (attendanceMap[d] === "absent") {
       return "bg-red-100 text-red-700 rounded-lg";
     }
 
-    return "bg-gray-50 text-gray-400 rounded-lg";
+    return "";
   };
 
-  // Selected date logic
   const selectedDateKey = selectedDate
     ? selectedDate.toISOString().split("T")[0]
     : null;
@@ -66,164 +64,266 @@ const StudentAttendance = () => {
     <div className="space-y-6">
 
       {/* HEADER */}
-      <div className="bg-linear-to-r from-indigo-500 to-purple-600 text-white p-6 rounded-2xl">
-        <h1 className="text-2xl font-bold">
-          📅 Attendance Overview
+      <div>
+        <h1 className="text-2xl font-bold text-gray-800">
+          Attendance
         </h1>
-        <p className="text-white/80 text-sm">
-          Track your daily attendance
+
+        <p className="text-gray-400 mt-1 text-sm">
+          Track your attendance and monitor your progress.
         </p>
       </div>
 
-      {/* TOP STATS */}
+      {/* KPI CARDS */}
       {stats && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 xl:grid-cols-4 gap-5">
 
-          <div className="bg-green-100 p-4 rounded-xl ">
-            <p className="text-green-600 text-sm">Present</p>
-            <h2 className="text-2xl font-bold">{stats.present}</h2>
+          <div className="bg-white rounded-2xl shadow-sm p-5 flex items-center gap-4">
+            <div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center text-lg">
+              ✅
+            </div>
+
+            <div>
+              <p className="text-sm text-gray-400">
+                Present
+              </p>
+
+              <h2 className="text-xl font-bold text-gray-800">
+                {stats.present}
+              </h2>
+            </div>
           </div>
 
-          <div className="bg-red-100 p-4 rounded-xl ">
-            <p className="text-red-600 text-sm">Absent</p>
-            <h2 className="text-2xl font-bold">{stats.absent}</h2>
+          <div className="bg-white rounded-2xl shadow-sm p-5 flex items-center gap-4">
+            <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center text-lg">
+              ❌
+            </div>
+
+            <div>
+              <p className="text-sm text-gray-400">
+                Absent
+              </p>
+
+              <h2 className="text-xl font-bold text-gray-800">
+                {stats.absent}
+              </h2>
+            </div>
           </div>
 
-          <div className="bg-blue-100 p-4 rounded-xl ">
-            <p className="text-blue-600 text-sm">Total</p>
-            <h2 className="text-2xl font-bold">{stats.total}</h2>
+          <div className="bg-white rounded-2xl shadow-sm p-5 flex items-center gap-4">
+            <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center text-lg">
+              📅
+            </div>
+
+            <div>
+              <p className="text-sm text-gray-400">
+                Total Classes
+              </p>
+
+              <h2 className="text-xl font-bold text-gray-800">
+                {stats.total}
+              </h2>
+            </div>
           </div>
 
-          <div className="bg-indigo-200 p-4 rounded-xl ">
-            <p className="text-indigo-600 text-sm">%</p>
-            <h2 className="text-2xl font-bold">{stats.percentage}%</h2>
+          <div className="bg-white rounded-2xl shadow-sm p-5 flex items-center gap-4">
+            <div className="w-10 h-10 rounded-xl bg-yellow-100 flex items-center justify-center text-lg">
+              📊
+            </div>
+
+            <div>
+              <p className="text-sm text-gray-400">
+                Attendance
+              </p>
+
+              <h2 className="text-xl font-bold text-gray-800">
+                {stats.percentage}%
+              </h2>
+            </div>
           </div>
 
         </div>
       )}
 
-      {/* MAIN */}
+      {/* MAIN GRID */}
       <div className="grid lg:grid-cols-3 gap-6">
 
         {/* CALENDAR */}
-        <div className="lg:col-span-2 bg-white p-5 rounded-2xl  shadow-sm">
+        <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm p-6 pb-4">
 
-          <h2 className="font-semibold mb-4">
-            Monthly Attendance
+          <h2 className="text-lg font-semibold mb-4">
+            📅 Monthly Attendance
           </h2>
 
-          <div className="flex justify-center">
-            <div className="w-full max-w-md">
-              <Calendar
-                value={selectedDate}   // ✅ FIX 2 (important)
-                onClickDay={(value) => setSelectedDate(value)}
-                tileClassName={getTileClass}
-                className="w-full -none"
-              />
-            </div>
+          <div className="border border-gray-200 rounded-xl overflow-hidden">
+            <Calendar
+              value={selectedDate}
+              onClickDay={(value) => setSelectedDate(value)}
+              tileClassName={getTileClass}
+              className=" w-full! border-none! mb-0!"
+            />
           </div>
+
         </div>
 
         {/* RIGHT PANEL */}
-        <div className="space-y-4">
+        <div className="space-y-3">
 
-          <div className="bg-linear-to-r from-indigo-500 to-purple-600 text-white p-5 rounded-2xl">
-            <h3 className="font-semibold">Today</h3>
-            <p className="text-sm text-white/80">
+          {/* TODAY */}
+          <div className="bg-white rounded-2xl shadow-sm p-2 pl-6">
+            <h2 className="font-semibold text-base text-gray-800">
+              Today
+            </h2>
+
+            <p className="text-gray-400 mt-2 text-sm">
               {new Date().toDateString()}
             </p>
           </div>
 
-          <div className="bg-white p-5 rounded-2xl ">
-            <h3 className="font-semibold mb-3">📊 Insight</h3>
+          {/* ATTENDANCE INSIGHT */}
+          <div className="bg-white rounded-2xl shadow-sm p-2 pl-6 pr-6">
+
+            <h2 className="font-semibold text-base text-gray-800 mb-3">
+              📊 Attendance Insight
+            </h2>
 
             {stats && (
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span>Attendance Rate</span>
-                  <span className="font-bold">{stats.percentage}%</span>
-                </div>
+              <div className="space-y-2">
 
-                <div className="flex justify-between">
-                  <span>Status</span>
-                  <span className={`font-bold ${
-                    stats.percentage >= 75
-                      ? "text-green-600"
-                      : "text-red-500"
-                  }`}>
-                    {stats.percentage >= 75 ? "Good" : "Need Improvement"}
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-500">
+                    Attendance Rate
+                  </span>
+
+                  <span className="font-bold text-base">
+                    {stats.percentage}%
                   </span>
                 </div>
+
+                <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
+                  <div
+                    className={`h-full rounded-full ${
+                      stats.percentage >= 75
+                        ? "bg-green-500"
+                        : "bg-red-500"
+                    }`}
+                    style={{
+                      width: `${stats.percentage}%`,
+                    }}
+                  ></div>
+                </div>
+
+                <div className="flex justify-between items-center">
+
+                  <span className="text-gray-500">
+                    Status
+                  </span>
+
+                  <span
+                    className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                      stats.percentage >= 75
+                        ? "bg-green-100 text-green-700"
+                        : "bg-red-100 text-red-700"
+                    }`}
+                  >
+                    {stats.percentage >= 75
+                      ? "Good"
+                      : "Need Improvement"}
+                  </span>
+
+                </div>
+
               </div>
             )}
+
           </div>
 
-          <div className="bg-white p-5 rounded-2xl ">
-            <h3 className="font-semibold mb-3">Legend</h3>
+          {/* LEGEND */}
+          <div className="bg-white rounded-2xl shadow-sm pl-6 pr-6 p-2">
 
-            <div className="space-y-2 text-sm">
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 bg-green-500 rounded"></div>
-                <span>Present</span>
+            <h2 className="font-semibold text-base text-gray-800 mb-3">
+              Legend
+            </h2>
+
+            <div className="space-y-2">
+
+              <div className="flex items-center gap-3">
+                <div className="w-4 h-4 rounded bg-green-500"></div>
+                <span className="text-gray-600">
+                  Present
+                </span>
               </div>
 
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 bg-red-500 rounded"></div>
-                <span>Absent</span>
+              <div className="flex items-center gap-3">
+                <div className="w-4 h-4 rounded bg-red-500"></div>
+                <span className="text-gray-600">
+                  Absent
+                </span>
               </div>
 
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 bg-gray-500 rounded"></div>
-                <span>Not Marked</span>
+              <div className="flex items-center gap-3">
+                <div className="w-4 h-4 rounded bg-gray-300"></div>
+                <span className="text-gray-600">
+                  Not Marked
+                </span>
               </div>
+
             </div>
+
           </div>
 
         </div>
+
       </div>
 
-      {/* SELECTED DAY (NOW ALWAYS SHOWS) */}
-      {selectedDate && (
-        <div className="bg-white p-5 rounded-2xl ">
+      {/* SELECTED DAY */}
+      <div className="bg-white rounded-2xl shadow-sm p-6">
 
-          <h2 className="font-bold mb-2">
-            📌 Selected Day
-          </h2>
+        <h2 className="text-lg font-semibold mb-4">
+          📌 Selected Day
+        </h2>
 
-          <div className="flex justify-between items-center">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-6">
 
-            <div>
-              <p className="text-sm text-gray-500">Date</p>
-              <p className="font-semibold">
-                {selectedDate.toDateString()}
-              </p>
+          <div>
 
-              <p className="text-sm text-gray-500 mt-2">
-                Status
-              </p>
+            <p className="text-sm text-gray-400">
+              Date
+            </p>
 
-              <p className="font-semibold">
-                {selectedStatus === "not_marked"
-                  ? "Not Marked"
-                  : selectedStatus}
-              </p>
-            </div>
+            <p className="text-base font-semibold text-gray-800">
+              {selectedDate.toDateString()}
+            </p>
 
-            <div className={`px-4 py-1 rounded-full text-white text-sm font-semibold ${
+            <p className="text-sm text-gray-400 mt-4">
+              Attendance Status
+            </p>
+
+            <p className="text-base font-semibold capitalize text-gray-800">
+              {selectedStatus === "not_marked"
+                ? "Not Marked"
+                : selectedStatus}
+            </p>
+
+          </div>
+
+          <div
+            className={`px-5 py-2 rounded-full text-sm font-semibold text-white ${
               selectedStatus === "present"
                 ? "bg-green-500"
                 : selectedStatus === "absent"
                 ? "bg-red-500"
                 : "bg-gray-500"
-            }`}>
-              {selectedStatus === "not_marked"
-                ? "NOT MARKED"
-                : selectedStatus.toUpperCase()}
-            </div>
-
+            }`}
+          >
+            {selectedStatus === "not_marked"
+              ? "NOT MARKED"
+              : selectedStatus.toUpperCase()}
           </div>
+
         </div>
-      )}
+
+      </div>
 
     </div>
   );

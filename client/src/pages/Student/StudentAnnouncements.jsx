@@ -32,9 +32,9 @@ const StudentAnnouncements = () => {
     <div className="min-h-screen bg-gray-50 p-6">
 
       {/* HEADER */}
-      <div className="bg-linear-to-r from-indigo-500 to-purple-600 text-white p-6 rounded-2xl mb-6">
+      <div className=" text-Black bg-gray-200 p-6 rounded-2xl mb-6">
         <h1 className="text-2xl font-bold">📢 Announcements</h1>
-        <p className="text-white/80 text-sm">
+        <p className="text-black`/80 text-sm">
           Latest updates from teachers & administration
         </p>
       </div>
