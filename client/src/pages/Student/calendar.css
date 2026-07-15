@@ -1,0 +1,28 @@
+.attendance-calendar {
+  width: 100% !important;
+  height: 100% !important;
+  border: none !important;
+}
+
+.attendance-calendar .react-calendar__viewContainer {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.attendance-calendar .react-calendar__month-view {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.attendance-calendar .react-calendar__month-view > div {
+  width: 100% !important;
+}
+
+.attendance-calendar .react-calendar__month-view__days {
+  display: grid !important;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.attendance-calendar .react-calendar__tile {
+  height: 50px;
+}
