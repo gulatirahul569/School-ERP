@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import API from "../../services/API";
+import API from "../../services/api";
 
 const MyClasses = () => {
   const [classes, setClasses] = useState([]);
