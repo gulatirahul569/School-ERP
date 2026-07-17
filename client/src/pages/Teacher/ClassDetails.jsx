@@ -18,7 +18,7 @@ const ClassDetails = () => {
       const token = localStorage.getItem("token");
 
       const res = await axios.get(
-        `http://localhost:5000/api/class/${id}`,
+        `${import.meta.env.VITE_API_URL}/class/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
