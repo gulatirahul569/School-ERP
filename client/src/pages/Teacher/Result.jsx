@@ -1,16 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import axios from "../../services/api";
 
-const EXAM_TYPES = [
-  "Unit Test 1",
-  "Unit Test 2",
-  "Mid Term",
-  "Final Term",
-];
+const EXAM_TYPES = ["Unit Test 1", "Unit Test 2", "Mid Term", "Final Term"];
 
 const Result = () => {
+  // ==========================
+  // STATES
+  // ==========================
   const [classes, setClasses] = useState([]);
   const [selectedClass, setSelectedClass] = useState("");
+  const [teacherSubjects, setTeacherSubjects] = useState([]);
+
   const [subject, setSubject] = useState("");
   const [examType, setExamType] = useState(EXAM_TYPES[0]);
   const [maxMarks, setMaxMarks] = useState(100);
@@ -21,16 +21,23 @@ const Result = () => {
 
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("success");
 
-  // ======================
-  // GET TEACHER CLASSES
-  // ======================
+  // NEW
+  const [search, setSearch] = useState("");
+
+  // ==========================
+  // LOAD CLASSES
+  // ==========================
   useEffect(() => {
     fetchMyClasses();
   }, []);
 
+  // ==========================
+  // LOAD STUDENTS
+  // ==========================
   useEffect(() => {
     if (selectedClass) {
       fetchClassStudents();
@@ -41,22 +48,50 @@ const Result = () => {
     }
   }, [selectedClass]);
 
+  // ==========================
+  // LOAD SAVED RESULT
+  // ==========================
   useEffect(() => {
     if (selectedClass && subject && examType && students.length > 0) {
       fetchExistingResult();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
+    // eslint-disable-next-line
   }, [selectedClass, subject, examType, students]);
 
+  useEffect(() => {
+    fetchTeacherDashboard();
+    fetchMyClasses();
+  }, []);
+
+const fetchTeacherDashboard = async () => {
+  try {
+    const res = await axios.get("/teacher/dashboard");
+
+    console.log(res.data);
+
+    setTeacherSubjects(res.data.subjectList || []);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+  // ==========================
+  // GET MY CLASSES
+  // ==========================
   const fetchMyClasses = async () => {
     try {
       const res = await axios.get("/class/my-classes");
+
       setClasses(res.data?.data || []);
     } catch (err) {
       console.log(err);
     }
   };
 
+  // ==========================
+  // GET STUDENTS OF CLASS
+  // ==========================
   const fetchClassStudents = async () => {
     try {
       setLoading(true);
@@ -72,7 +107,7 @@ const Result = () => {
           student: student._id,
           marksObtained: 0,
           remarks: "",
-        }))
+        })),
       );
     } catch (err) {
       console.log(err);
@@ -81,10 +116,17 @@ const Result = () => {
     }
   };
 
+  // ==========================
+  // LOAD EXISTING RESULT
+  // ==========================
   const fetchExistingResult = async () => {
     try {
       const res = await axios.get("/result/by-sheet", {
-        params: { classId: selectedClass, subject, examType },
+        params: {
+          classId: selectedClass,
+          subject,
+          examType,
+        },
       });
 
       const records = res.data?.records || [];
@@ -99,7 +141,9 @@ const Result = () => {
       setMarks(
         students.map((student) => {
           const found = records.find((r) => {
-            const id = typeof r.student === "object" ? r.student._id : r.student;
+            const id =
+              typeof r.student === "object" ? r.student._id : r.student;
+
             return id === student._id;
           });
 
@@ -108,41 +152,66 @@ const Result = () => {
             marksObtained: found?.marksObtained ?? 0,
             remarks: found?.remarks || "",
           };
-        })
+        }),
       );
     } catch (err) {
       setSavedResult(null);
+
       setMarks(
-        students.map((s) => ({
-          student: s._id,
+        students.map((student) => ({
+          student: student._id,
           marksObtained: 0,
           remarks: "",
-        }))
+        })),
       );
     }
   };
 
+  // ==========================
+  // MARKS CHANGE
+  // ==========================
   const handleMarksChange = (studentId, value) => {
     const numeric = Number(value);
-    const clamped = Number.isNaN(numeric)
+
+    const finalValue = Number.isNaN(numeric)
       ? 0
       : Math.max(0, Math.min(numeric, Number(maxMarks) || 100));
 
     setMarks((prev) =>
-      prev.map((m) => (m.student === studentId ? { ...m, marksObtained: clamped } : m))
+      prev.map((m) =>
+        m.student === studentId
+          ? {
+              ...m,
+              marksObtained: finalValue,
+            }
+          : m,
+      ),
     );
   };
 
+  // ==========================
+  // REMARK CHANGE
+  // ==========================
   const handleRemarksChange = (studentId, value) => {
     setMarks((prev) =>
-      prev.map((m) => (m.student === studentId ? { ...m, remarks: value } : m))
+      prev.map((m) =>
+        m.student === studentId
+          ? {
+              ...m,
+              remarks: value,
+            }
+          : m,
+      ),
     );
   };
 
+  // ==========================
+  // SAVE RESULT
+  // ==========================
   const handleSubmit = async () => {
     if (!subject.trim()) {
       setMessageType("error");
-      setMessage("Please enter a subject before saving.");
+      setMessage("Please enter subject name.");
       return;
     }
 
@@ -154,88 +223,233 @@ const Result = () => {
         classId: selectedClass,
         subject: subject.trim(),
         examType,
-        maxMarks: Number(maxMarks) || 100,
+        maxMarks: Number(maxMarks),
         records: marks,
       });
 
       setMessageType("success");
-      setMessage("Result saved successfully");
+      setMessage("Result saved successfully.");
+
       fetchExistingResult();
     } catch (err) {
       setMessageType("error");
-      setMessage(err.response?.data?.message || "Failed to save result");
+      setMessage(err.response?.data?.message || "Failed to save result.");
     } finally {
       setSaving(false);
     }
   };
-
+  // ==========================
+  // GRADE
+  // ==========================
   const gradeFor = (obtained, max) => {
-    const pct = max > 0 ? (obtained / max) * 100 : 0;
-    if (pct >= 90) return { label: "A+", color: "text-green-700 bg-green-50 border-green-200" };
-    if (pct >= 75) return { label: "A", color: "text-green-700 bg-green-50 border-green-200" };
-    if (pct >= 60) return { label: "B", color: "text-blue-700 bg-blue-50 border-blue-200" };
-    if (pct >= 40) return { label: "C", color: "text-yellow-700 bg-yellow-50 border-yellow-200" };
-    return { label: "F", color: "text-red-700 bg-red-50 border-red-200" };
+    const percentage = max > 0 ? (obtained / max) * 100 : 0;
+
+    if (percentage >= 90)
+      return {
+        label: "A+",
+        color: "bg-green-100 text-green-700 border-green-200",
+      };
+
+    if (percentage >= 75)
+      return {
+        label: "A",
+        color: "bg-emerald-100 text-emerald-700 border-emerald-200",
+      };
+
+    if (percentage >= 60)
+      return {
+        label: "B",
+        color: "bg-blue-100 text-blue-700 border-blue-200",
+      };
+
+    if (percentage >= 40)
+      return {
+        label: "C",
+        color: "bg-yellow-100 text-yellow-700 border-yellow-200",
+      };
+
+    return {
+      label: "F",
+      color: "bg-red-100 text-red-700 border-red-200",
+    };
   };
 
+  // ==========================
+  // FILTERED STUDENTS
+  // ==========================
+  const filteredStudents = useMemo(() => {
+    if (!search.trim()) return students;
+
+    return students.filter(
+      (student) =>
+        student.name?.toLowerCase().includes(search.toLowerCase()) ||
+        student.email?.toLowerCase().includes(search.toLowerCase()),
+    );
+  }, [students, search]);
+
+  // ==========================
+  // SUMMARY
+  // ==========================
+  const totalStudents = marks.length;
+
+  const totalMarks = marks.reduce((sum, item) => sum + item.marksObtained, 0);
+
   const classAverage =
-    marks.length > 0
-      ? Math.round(
-          (marks.reduce((sum, m) => sum + m.marksObtained, 0) /
-            marks.length /
-            (Number(maxMarks) || 1)) *
-            100
-        )
+    totalStudents > 0
+      ? Math.round((totalMarks / totalStudents / (Number(maxMarks) || 1)) * 100)
       : 0;
 
   const passCount = marks.filter(
-    (m) => (m.marksObtained / (Number(maxMarks) || 1)) * 100 >= 40
+    (m) => (m.marksObtained / (Number(maxMarks) || 1)) * 100 >= 40,
   ).length;
 
+  const failCount = totalStudents - passCount;
+
+  const passPercentage =
+    totalStudents > 0 ? Math.round((passCount / totalStudents) * 100) : 0;
+
+  // ==========================
+  // TOPPER
+  // ==========================
+  const topper = students.reduce((best, student) => {
+    const current = marks.find((m) => m.student === student._id);
+
+    if (!current) return best;
+
+    if (!best || current.marksObtained > best.marksObtained) {
+      return {
+        ...student,
+        marksObtained: current.marksObtained,
+      };
+    }
+
+    return best;
+  }, null);
+
+  // ==========================
+  // DASHBOARD CARDS
+  // ==========================
+  const dashboardCards = [
+    {
+      title: "Students",
+      value: totalStudents,
+      icon: "👨‍🎓",
+      bg: "bg-indigo-50",
+      iconBg: "bg-indigo-100",
+    },
+    {
+      title: "Average",
+      value: `${classAverage}%`,
+      icon: "📊",
+      bg: "bg-green-50",
+      iconBg: "bg-green-100",
+    },
+    {
+      title: "Pass Rate",
+      value: `${passPercentage}%`,
+      icon: "✅",
+      bg: "bg-yellow-50",
+      iconBg: "bg-yellow-100",
+    },
+    {
+      title: "Top Score",
+      value: topper ? `${topper.marksObtained}/${maxMarks}` : "--",
+      icon: "🏆",
+      bg: "bg-purple-50",
+      iconBg: "bg-purple-100",
+    },
+  ];
   return (
-    <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 p-4 md:p-8">
-      <div className="max-w-7xl mx-auto">
-        {/* HEADER */}
-        <div className="mb-8">
+    <div className="space-y-6 p-3 sm:p-6">
+      {/* ================= HEADER ================= */}
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div>
           <h1 className="text-3xl font-bold text-gray-800">
             Result Management
           </h1>
+
           <p className="text-gray-500 mt-1">
-            Enter and update exam marks for your assigned classes
+            Manage examination results for your assigned classes
           </p>
         </div>
 
-        {/* MESSAGE */}
-        {message && (
-          <div
-            className={`mb-6 rounded-xl border px-4 py-3 shadow-sm ${
-              messageType === "error"
-                ? "border-red-200 bg-red-50 text-red-700"
-                : "border-blue-200 bg-blue-50 text-blue-700"
-            }`}
-          >
-            {message}
+        {savedResult && (
+          <div className="bg-green-50 border border-green-200 rounded-xl px-4 py-3">
+            <p className="text-xs text-green-600 font-medium">Last Updated</p>
+
+            <p className="font-semibold text-green-800">
+              {new Date(savedResult.updatedAt).toLocaleString()}
+            </p>
           </div>
         )}
+      </div>
 
-        {/* FILTER CARD */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      {/* ================= MESSAGE ================= */}
+
+      {message && (
+        <div
+          className={`rounded-xl border px-5 py-4 ${
+            messageType === "error"
+              ? "bg-red-50 border-red-200 text-red-700"
+              : "bg-green-50 border-green-200 text-green-700"
+          }`}
+        >
+          {message}
+        </div>
+      )}
+
+      {/* ================= KPI CARDS ================= */}
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+        {dashboardCards.map((card) => (
+          <div
+            key={card.title}
+            className={`${card.bg} rounded-2xl border border-gray-100 p-5 flex items-center gap-4`}
+          >
+            <div
+              className={`${card.iconBg} w-14 h-14 rounded-xl flex items-center justify-center text-2xl`}
+            >
+              {card.icon}
+            </div>
+
+            <div>
+              <p className="text-gray-500 text-sm">{card.title}</p>
+
+              <h2 className="text-2xl font-bold text-gray-800">{card.value}</h2>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* ================= FILTER CARD ================= */}
+
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100">
+        <div className="border-b px-6 py-4">
+          <h2 className="font-semibold text-gray-800 text-lg">
+            Examination Details
+          </h2>
+        </div>
+
+        <div className="p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-5">
             {/* CLASS */}
+
             <div>
               <label className="text-sm font-semibold text-gray-700 mb-2 block">
-                Select Class
+                Class
               </label>
 
               <select
                 value={selectedClass}
                 onChange={(e) => setSelectedClass(e.target.value)}
-                className="w-full rounded-xl border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 px-4 py-3"
+                className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-indigo-500"
               >
-                <option value="">-- Select Class --</option>
+                <option value="">Select Class</option>
+
                 {classes.map((cls) => (
                   <option key={cls._id} value={cls._id}>
-                    Class {cls.name} {cls.section ? `- ${cls.section}` : ""}
+                    Class {cls.name}
+                    {cls.section && ` - ${cls.section}`}
                   </option>
                 ))}
               </select>
@@ -247,16 +461,23 @@ const Result = () => {
                 Subject
               </label>
 
-              <input
-                type="text"
+              <select
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
-                placeholder="e.g. Mathematics"
-                className="w-full rounded-xl border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 px-4 py-3"
-              />
+                className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-indigo-500"
+              >
+                <option value="">Select Subject</option>
+
+                {teacherSubjects?.map((sub) => (
+                  <option key={sub} value={sub}>
+                    {sub}
+                  </option>
+                ))}
+              </select>
             </div>
 
-            {/* EXAM TYPE */}
+            {/* EXAM */}
+
             <div>
               <label className="text-sm font-semibold text-gray-700 mb-2 block">
                 Exam
@@ -265,7 +486,7 @@ const Result = () => {
               <select
                 value={examType}
                 onChange={(e) => setExamType(e.target.value)}
-                className="w-full rounded-xl border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 px-4 py-3"
+                className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-indigo-500"
               >
                 {EXAM_TYPES.map((type) => (
                   <option key={type} value={type}>
@@ -276,173 +497,289 @@ const Result = () => {
             </div>
 
             {/* MAX MARKS */}
+
             <div>
               <label className="text-sm font-semibold text-gray-700 mb-2 block">
-                Max Marks
+                Maximum Marks
               </label>
 
               <input
                 type="number"
-                min="1"
                 value={maxMarks}
+                min={1}
                 onChange={(e) => setMaxMarks(e.target.value)}
-                className="w-full rounded-xl border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 px-4 py-3"
+                className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+
+            {/* SEARCH */}
+
+            <div>
+              <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                Search Student
+              </label>
+
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search..."
+                className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-indigo-500"
               />
             </div>
           </div>
         </div>
+      </div>
 
-        {/* SUMMARY CARD */}
-        {selectedClass && subject && marks.length > 0 && (
-          <div className="bg-white rounded-2xl shadow-sm border p-6 mb-6">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">
-              Result Summary
+      {/* ================= RESULT SUMMARY ================= */}
+
+      {selectedClass && subject && marks.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div className="bg-white rounded-2xl border border-gray-100 p-6">
+            <p className="text-sm text-gray-500">Class Average</p>
+
+            <h2 className="text-3xl font-bold text-indigo-600 mt-2">
+              {classAverage}%
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="rounded-xl bg-indigo-50 p-4 border border-indigo-100">
-                <p className="text-indigo-700 font-medium">Class Average</p>
-                <p className="text-2xl font-bold text-indigo-800">
-                  {classAverage}%
-                </p>
-              </div>
-
-              <div className="rounded-xl bg-green-50 p-4 border border-green-100">
-                <p className="text-green-700 font-medium">Passed</p>
-                <p className="text-2xl font-bold text-green-800">
-                  {passCount} / {marks.length}
-                </p>
-              </div>
-
-              <div className="rounded-xl bg-blue-50 p-4 border border-blue-100">
-                <p className="text-blue-700 font-medium">
-                  {savedResult ? "Last Saved" : "Status"}
-                </p>
-                <p className="text-lg font-bold text-blue-800">
-                  {savedResult
-                    ? new Date(savedResult.updatedAt).toLocaleDateString()
-                    : "Not saved yet"}
-                </p>
-              </div>
+            <div className="mt-4 h-2 bg-gray-100 rounded-full overflow-hidden">
+              <div
+                className="bg-indigo-600 h-full rounded-full"
+                style={{ width: `${classAverage}%` }}
+              />
             </div>
           </div>
-        )}
 
-        {/* TABLE CARD */}
-        {selectedClass && (
-          <div className="bg-white rounded-2xl shadow-sm border overflow-hidden">
-            <div className="px-6 py-4 border-b bg-gray-50">
-              <h3 className="font-semibold text-gray-800">
-                Student Marks {subject ? `- ${subject}` : ""}
-              </h3>
+          <div className="bg-white rounded-2xl border border-gray-100 p-6">
+            <p className="text-sm text-gray-500">Students Passed</p>
+
+            <h2 className="text-3xl font-bold text-green-600 mt-2">
+              {passCount}
+            </h2>
+
+            <p className="text-sm text-gray-400 mt-2">Failed : {failCount}</p>
+          </div>
+
+          <div className="bg-white rounded-2xl border border-gray-100 p-6">
+            <p className="text-sm text-gray-500">Highest Score</p>
+
+            <h2 className="text-3xl font-bold text-purple-600 mt-2">
+              {topper ? `${topper.marksObtained}/${maxMarks}` : "--"}
+            </h2>
+
+            <p className="text-sm text-gray-400 mt-2 truncate">
+              {topper?.name || "No Data"}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* ================= STUDENT TABLE ================= */}
+
+      {selectedClass && (
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 px-6 py-5 border-b">
+            <div>
+              <h2 className="text-lg font-semibold text-gray-800">
+                Student Marks
+              </h2>
+
+              <p className="text-sm text-gray-500 mt-1">
+                {filteredStudents.length} Students
+              </p>
             </div>
 
-            <div className="p-6">
-              {loading ? (
-                <div className="text-center py-10 text-gray-500">
-                  Loading students...
-                </div>
-              ) : students.length === 0 ? (
-                <div className="text-center py-10 text-gray-500">
-                  No students found
-                </div>
-              ) : (
-                <>
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full text-sm">
-                      <thead>
-                        <tr className="text-left border-b">
-                          <th className="py-3">#</th>
-                          <th>Name</th>
-                          <th>Email</th>
-                          <th>Marks Obtained</th>
-                          <th>Grade</th>
-                          <th>Remarks</th>
-                        </tr>
-                      </thead>
+            <div className="flex items-center gap-2">
+              <span className="px-3 py-1 rounded-lg bg-indigo-50 text-indigo-600 text-sm font-medium">
+                {examType}
+              </span>
 
-                      <tbody>
-                        {students.map((student, index) => {
-                          const current = marks.find(
-                            (m) => m.student === student._id
-                          ) || { marksObtained: 0, remarks: "" };
-
-                          const grade = gradeFor(
-                            current.marksObtained,
-                            Number(maxMarks) || 100
-                          );
-
-                          return (
-                            <tr
-                              key={student._id}
-                              className="border-b hover:bg-gray-50"
-                            >
-                              <td className="py-3">{index + 1}</td>
-                              <td>{student.name}</td>
-                              <td>{student.email}</td>
-                              <td>
-                                <div className="flex items-center gap-2">
-                                  <input
-                                    type="number"
-                                    min="0"
-                                    max={maxMarks}
-                                    value={current.marksObtained}
-                                    onChange={(e) =>
-                                      handleMarksChange(
-                                        student._id,
-                                        e.target.value
-                                      )
-                                    }
-                                    className="w-20 rounded-lg border border-gray-300 px-3 py-1.5 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
-                                  />
-                                  <span className="text-gray-400 text-xs">
-                                    / {maxMarks}
-                                  </span>
-                                </div>
-                              </td>
-                              <td>
-                                <span
-                                  className={`px-3 py-1 rounded-lg border text-sm font-medium ${grade.color}`}
-                                >
-                                  {grade.label}
-                                </span>
-                              </td>
-                              <td>
-                                <input
-                                  type="text"
-                                  value={current.remarks}
-                                  onChange={(e) =>
-                                    handleRemarksChange(
-                                      student._id,
-                                      e.target.value
-                                    )
-                                  }
-                                  placeholder="Optional note"
-                                  className="w-full min-w-35 rounded-lg border border-gray-300 px-3 py-1.5 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
-                                />
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
-
-                  <div className="flex justify-end mt-6">
-                    <button
-                      onClick={handleSubmit}
-                      disabled={saving}
-                      className="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-medium disabled:opacity-50"
-                    >
-                      {saving ? "Saving..." : "Save Result"}
-                    </button>
-                  </div>
-                </>
-              )}
+              <span className="px-3 py-1 rounded-lg bg-gray-100 text-gray-700 text-sm font-medium">
+                {subject || "Subject"}
+              </span>
             </div>
           </div>
-        )}
-      </div>
+
+          <div className="overflow-x-auto">
+            {loading ? (
+              <div className="text-center py-14 text-gray-500">
+                Loading students...
+              </div>
+            ) : filteredStudents.length === 0 ? (
+              <div className="text-center py-14 text-gray-500">
+                No students found.
+              </div>
+            ) : (
+              <table className="min-w-full">
+                <thead className="sticky top-0 bg-gray-50 z-10">
+                  <tr className="border-b">
+                    <th className="px-6 py-4 text-left text-xs uppercase tracking-wide text-gray-500">
+                      #
+                    </th>
+
+                    <th className="px-6 py-4 text-left text-xs uppercase tracking-wide text-gray-500">
+                      Student
+                    </th>
+
+                    <th className="px-6 py-4 text-left text-xs uppercase tracking-wide text-gray-500">
+                      Email
+                    </th>
+
+                    <th className="px-6 py-4 text-center text-xs uppercase tracking-wide text-gray-500">
+                      Marks
+                    </th>
+
+                    <th className="px-6 py-4 text-center text-xs uppercase tracking-wide text-gray-500">
+                      Grade
+                    </th>
+
+                    <th className="px-6 py-4 text-left text-xs uppercase tracking-wide text-gray-500">
+                      Remarks
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {filteredStudents.map((student, index) => {
+                    const current = marks.find(
+                      (m) => m.student === student._id,
+                    ) || {
+                      marksObtained: 0,
+                      remarks: "",
+                    };
+
+                    const grade = gradeFor(
+                      current.marksObtained,
+                      Number(maxMarks) || 100,
+                    );
+
+                    const percentage = Math.round(
+                      (current.marksObtained / (Number(maxMarks) || 1)) * 100,
+                    );
+
+                    return (
+                      <tr
+                        key={student._id}
+                        className="border-b hover:bg-gray-50 transition"
+                      >
+                        {/* SERIAL */}
+                        <td className="px-6 py-5 text-gray-500 font-medium">
+                          {index + 1}
+                        </td>
+
+                        {/* STUDENT */}
+                        <td className="px-6 py-5">
+                          <div className="flex items-center gap-3">
+                            <div className="w-11 h-11 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm">
+                              {student.name
+                                ?.split(" ")
+                                .map((n) => n[0])
+                                .join("")
+                                .slice(0, 2)
+                                .toUpperCase()}
+                            </div>
+
+                            <div>
+                              <p className="font-semibold text-gray-800">
+                                {student.name}
+                              </p>
+
+                              <p className="text-xs text-gray-400">Student</p>
+                            </div>
+                          </div>
+                        </td>
+
+                        {/* EMAIL */}
+                        <td className="px-6 py-5 text-gray-500">
+                          {student.email}
+                        </td>
+
+                        {/* MARKS */}
+                        <td className="px-6 py-5">
+                          <div className="flex items-center justify-center gap-3">
+                            <input
+                              type="number"
+                              min="0"
+                              max={maxMarks}
+                              value={current.marksObtained}
+                              onChange={(e) =>
+                                handleMarksChange(student._id, e.target.value)
+                              }
+                              className="w-24 rounded-xl border border-gray-300 text-center px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            />
+
+                            <div className="text-xs text-gray-400 whitespace-nowrap">
+                              / {maxMarks}
+                            </div>
+                          </div>
+
+                          <div className="mt-2">
+                            <div className="h-2 rounded-full bg-gray-200 overflow-hidden">
+                              <div
+                                className={`h-full rounded-full ${
+                                  percentage >= 75
+                                    ? "bg-green-500"
+                                    : percentage >= 40
+                                      ? "bg-yellow-500"
+                                      : "bg-red-500"
+                                }`}
+                                style={{
+                                  width: `${percentage}%`,
+                                }}
+                              />
+                            </div>
+                          </div>
+                        </td>
+
+                        {/* GRADE */}
+                        <td className="px-6 py-5 text-center">
+                          <span
+                            className={`inline-flex items-center justify-center min-w-14 px-3 py-1 rounded-full border text-sm font-semibold ${grade.color}`}
+                          >
+                            {grade.label}
+                          </span>
+                        </td>
+
+                        {/* REMARKS */}
+                        <td className="px-6 py-5">
+                          <input
+                            type="text"
+                            value={current.remarks}
+                            onChange={(e) =>
+                              handleRemarksChange(student._id, e.target.value)
+                            }
+                            placeholder="Add remarks..."
+                            className="w-full rounded-xl border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                          />
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            )}
+          </div>
+
+          {/* FOOTER */}
+          {!loading && filteredStudents.length > 0 && (
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-t px-6 py-5 bg-gray-50">
+              <div className="text-sm text-gray-500">
+                Showing{" "}
+                <span className="font-semibold">{filteredStudents.length}</span>{" "}
+                students
+              </div>
+
+              <button
+                onClick={handleSubmit}
+                disabled={saving}
+                className="px-8 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {saving ? "Saving..." : "Save Results"}
+              </button>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
