@@ -47,138 +47,213 @@ const Login = () => {
     } finally {
       setLoading(false);
     }
-  };
-  return (
-    <div className="min-h-screen bg-[#eef2f7] flex items-center justify-center p-10">
-      <div
-        className="
-w-full
-max-w-6xl
-max-h-
-bg-white
-rounded-[34px]
-shadow-[0_25px_60px_rgba(0,0,0,0.08)]
-overflow-hidden
-grid
-lg:grid-cols-[58%_42%]
-"
-      >
+  };return (
+  <div className="min-h-screen bg-[#eef2f7] flex items-center justify-center p-4 lg:p-10 relative overflow-hidden">
 
-        {/* LEFT IMAGE */}
-        <div className="hidden lg:flex items-center justify-center p-8 bg-white">
-          <img
-            src="/login.png"
-            alt="login"
-            className="w-full  rounded-3xl object-cover"
-          />
-        </div>
+    {/* Mobile Background */}
+    <div
+      className="absolute inset-0 lg:hidden bg-cover bg-center"
+      style={{
+        backgroundImage: "url('/login.png')",
+      }}
+    />
 
-        {/* RIGHT SIDE */}
-        <div
+    {/* Mobile Overlay */}
+    <div className="absolute inset-0 lg:hidden bg-black/40 backdrop-blur-[2px]" />
+
+    {/* Desktop Card */}
+    <div
+      className="
+      relative z-10
+      w-full
+      max-w-6xl
+
+      lg:bg-white
+      lg:rounded-[34px]
+      lg:shadow-[0_25px_60px_rgba(0,0,0,0.08)]
+
+      overflow-hidden
+      grid
+      lg:grid-cols-[58%_42%]
+      "
+    >
+      {/* LEFT IMAGE */}
+      <div className="hidden lg:flex items-center justify-center p-8 bg-white">
+        <img
+          src="/login.png"
+          alt="login"
+          className="w-full h-full object-cover rounded-3xl"
+        />
+      </div>
+
+      {/* RIGHT SIDE */}
+      <div className="flex items-center justify-center p-4 sm:p-8 lg:px-16 lg:py-12">
+
+        <form
+          onSubmit={handleSubmit}
           className="
-flex
-items-center
-justify-center
-px-16
-py-12
-"
+          w-full
+          max-w-md
+
+          lg:bg-transparent
+
+          bg-white/15
+          backdrop-blur-xl
+          border
+          border-white/20
+          rounded-3xl
+
+          p-7
+          sm:p-8
+          lg:p-0
+
+          shadow-2xl
+          lg:shadow-none
+          "
         >
-          <form onSubmit={handleSubmit} className="w-full max-w-md">
-            <div className="mb-10">
-              <div className="flex items-center gap-3 mb-10">
-                <div className="w-10 h-10 rounded-full bg-sky-500 flex items-center justify-center text-white font-bold">
-                  📚
-                </div>
 
-                <div>
-                  <p className="font-semibold text-slate-800">Management System</p>
-                </div>
-              </div>
-              <h1 className="text-4xl font-bold text-gray-900">Welcome Back</h1>
-
-              <p className="text-gray-500 mt-3">
-                Sign in to continue to your account.
-              </p>
+          {/* Logo */}
+          <div className="flex items-center gap-3 mb-8">
+            <div className="w-11 h-11 rounded-full bg-sky-500 flex items-center justify-center text-white">
+              📚
             </div>
 
-            {/* EMAIL */}
-            <div className="mb-5">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Email
-              </label>
+            <p className="font-semibold text-lg lg:text-slate-800 text-white">
+              Management System
+            </p>
+          </div>
 
-              <input
-                type="email"
-                name="email"
-                placeholder="Enter your email"
-                value={formData.email}
-                onChange={handleChange}
-                className="
-                w-full
-                rounded-xl
-                border
-                border-gray-300
-                px-5
-                py-4
-                outline-none
-                transition
-                focus:border-indigo-500
-                focus:ring-4
-                focus:ring-indigo-100
-              "
-              />
-            </div>
+          {/* Heading */}
+          <div className="mb-8">
 
-            {/* PASSWORD */}
-            <div className="mb-8">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Password
-              </label>
+            <h1 className="text-3xl lg:text-4xl font-bold lg:text-gray-900 text-white">
+              Welcome Back
+            </h1>
 
-              <input
-                type="password"
-                name="password"
-                placeholder="Enter your password"
-                value={formData.password}
-                onChange={handleChange}
-                className="
-                w-full
-                rounded-xl
-                border
-                border-gray-300
-                px-5
-                py-4
-                outline-none
-                transition
-                focus:border-indigo-500
-                focus:ring-4
-                focus:ring-indigo-100
-              "
-              />
-            </div>
+            <p className="mt-3 lg:text-gray-500 text-white/80">
+              Sign in to continue to your account.
+            </p>
 
-            {/* BUTTON */}
-            <button
-              type="submit"
-              disabled={loading}
+          </div>
+
+          {/* EMAIL */}
+
+          <div className="mb-5">
+
+            <label className="block text-sm mb-2 font-medium lg:text-gray-700 text-white">
+              Email
+            </label>
+
+            <input
+              type="email"
+              name="email"
+              placeholder="Enter your email"
+              value={formData.email}
+              onChange={handleChange}
               className="
               w-full
-              bg-black
-              hover:bg-gray-900
-              text-white
-              py-4
               rounded-xl
-              font-semibold
+              border
+
+              lg:border-gray-300
+              border-white/30
+
+              lg:bg-white
+              bg-white/15
+
+              lg:text-black
+              text-white
+
+              placeholder:text-white/70
+              lg:placeholder:text-gray-400
+
+              px-5
+              py-4
+
+              outline-none
               transition
-              disabled:opacity-50
+
+              focus:ring-4
+              focus:ring-sky-300
+              "
+            />
+
+          </div>
+
+          {/* PASSWORD */}
+
+          <div className="mb-8">
+
+            <label className="block text-sm mb-2 font-medium lg:text-gray-700 text-white">
+              Password
+            </label>
+
+            <input
+              type="password"
+              name="password"
+              placeholder="Enter your password"
+              value={formData.password}
+              onChange={handleChange}
+              className="
+              w-full
+              rounded-xl
+              border
+
+              lg:border-gray-300
+              border-white/30
+
+              lg:bg-white
+              bg-white/15
+
+              lg:text-black
+              text-white
+
+              placeholder:text-white/70
+              lg:placeholder:text-gray-400
+
+              px-5
+              py-4
+
+              outline-none
+              transition
+
+              focus:ring-4
+              focus:ring-sky-300
+              "
+            />
+
+          </div>
+
+          {/* BUTTON */}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="
+            w-full
+            py-4
+            rounded-xl
+            font-semibold
+
+            bg-sky-600
+            hover:bg-sky-700
+
+            text-white
+
+            transition
+            disabled:opacity-50
             "
-            >
-              {loading ? "Logging in..." : "Login"}
-            </button>
-          </form>
-        </div>
+          >
+            {loading ? "Logging in..." : "Login"}
+          </button>
+
+        </form>
+
       </div>
+
     </div>
-  );
+
+  </div>
+);
 };
-export default Login;
+export default Login
