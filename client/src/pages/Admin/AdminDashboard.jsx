@@ -137,39 +137,39 @@ const AdminDashboard = () => {
       : new Date().getHours() < 18
         ? "Good Afternoon"
         : "Good Evening";
-// ================= ATTENDANCE =================
+  // ================= ATTENDANCE =================
 
-const totalAttendance =
-  (stats?.presentToday || 0) + (stats?.absentToday || 0);
+  const totalAttendance =
+    (stats?.presentToday || 0) + (stats?.absentToday || 0);
 
-const presentPercentage =
-  totalAttendance > 0
-    ? Math.round(((stats?.presentToday || 0) / totalAttendance) * 100)
-    : 0;
+  const presentPercentage =
+    totalAttendance > 0
+      ? Math.round(((stats?.presentToday || 0) / totalAttendance) * 100)
+      : 0;
 
-const absentPercentage =
-  totalAttendance > 0
-    ? Math.round(((stats?.absentToday || 0) / totalAttendance) * 100)
-    : 0;
+  const absentPercentage =
+    totalAttendance > 0
+      ? Math.round(((stats?.absentToday || 0) / totalAttendance) * 100)
+      : 0;
 
-const attendanceData = [
-  {
-    name: "Present",
-    value: stats?.presentToday || 0,
-  },
-  {
-    name: "Absent",
-    value: stats?.absentToday || 0,
-  },
-];
+  const attendanceData = [
+    {
+      name: "Present",
+      value: stats?.presentToday || 0,
+    },
+    {
+      name: "Absent",
+      value: stats?.absentToday || 0,
+    },
+  ];
   return (
-    <div className="space-y-6 p-3 sm:p-2 sm:pt-0 animate-fadeIn">
+    <div className="space-y-4 px-2 py-3 sm:px-4 sm:py-4 lg:p-6 animate-fadeIn">
 
 
 
       {/* ================= HEADER ================= */}
 
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+      <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
 
         {/* Left */}
 
@@ -198,7 +198,7 @@ const attendanceData = [
 
         {/* Right Card */}
 
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 flex items-center gap-4">
+        <div className="w-full xl:w-auto bg-white rounded-2xl border border-gray-200 shadow-sm p-5 flex items-center gap-4">
 
           <div className="w-14 h-14 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold text-xl">
             A
@@ -228,7 +228,7 @@ const attendanceData = [
 
       {/* ================= KPI CARDS ================= */}
 
-      <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+      <div className=" grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
 
         {cards.map((card, index) => {
 
@@ -241,7 +241,7 @@ const attendanceData = [
               className="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 p-5"
             >
 
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-3">
 
                 <div>
 
@@ -249,7 +249,7 @@ const attendanceData = [
                     {card.title}
                   </p>
 
-                  <h2 className="mt-2 text-3xl font-bold text-gray-900">
+                  <h2 className="mt-2 text-2xl md:text-3xl font-bold text-gray-900">
                     {card.value}
                   </h2>
 
@@ -273,8 +273,8 @@ const attendanceData = [
                 >
 
                   <Icon
-                    size={28}
-                    className={card.text}
+                    size={24}
+                    className={`sm:w-7 sm:h-7 ${card.text}`}
                   />
 
                 </div>
@@ -319,7 +319,7 @@ const attendanceData = [
 
           {/* Small Stats */}
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
 
             <div className="rounded-xl bg-indigo-50 p-4">
 
@@ -416,195 +416,195 @@ const attendanceData = [
         </div>
 
         {/* ================= ATTENDANCE ================= */}
-<div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
 
-  <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-6">
 
-    <div>
-      <h2 className="text-xl font-bold text-gray-900">
-        Attendance Analytics
-      </h2>
+            <div>
+              <h2 className="text-xl font-bold text-gray-900">
+                Attendance Analytics
+              </h2>
 
-      <p className="text-sm text-gray-500 mt-1">
-        Today's attendance overview
-      </p>
-    </div>
+              <p className="text-sm text-gray-500 mt-1">
+                Today's attendance overview
+              </p>
+            </div>
 
-    <div className="px-4 py-2 rounded-xl bg-green-50 text-green-600 text-sm font-semibold">
-      Live
-    </div>
-
-  </div>
-
-  <div className="grid lg:grid-cols-2 gap-8 items-center">
-
-    {/* Pie Chart */}
-
-    <div className="h-72">
-
-      <ResponsiveContainer width="100%" height="100%">
-
-        <PieChart>
-
-          <Pie
-            data={attendanceData}
-            dataKey="value"
-            innerRadius={70}
-            outerRadius={100}
-            paddingAngle={5}
-          >
-
-            {attendanceData.map((item, index) => (
-
-              <Cell
-                key={index}
-                fill={COLORS[index]}
-              />
-
-            ))}
-
-          </Pie>
-
-          <Tooltip
-            formatter={(value, name) => [
-              `${value} Students (${name === "Present"
-                ? presentPercentage
-                : absentPercentage}%)`,
-              name,
-            ]}
-            contentStyle={{
-              borderRadius: 14,
-              border: "none",
-              boxShadow: "0 10px 30px rgba(0,0,0,.08)",
-            }}
-          />
-
-        </PieChart>
-
-      </ResponsiveContainer>
-
-    </div>
-
-    {/* Statistics */}
-
-    <div className="space-y-4">
-
-      {/* Present */}
-
-      <div className="rounded-2xl bg-indigo-50 p-3">
-
-        <div className="flex justify-between items-center">
-
-          <div>
-
-            <p className="text-sm text-gray-500">
-              Present Students
-            </p>
-
-            <h3 className="text-3xl font-bold text-indigo-700 mt-2">
-              {presentPercentage}%
-            </h3>
-
-            <p className="text-sm text-gray-500 mt-1">
-              {stats?.presentToday || 0} Students
-            </p>
+            <div className="px-4 py-2 rounded-xl bg-green-50 text-green-600 text-sm font-semibold">
+              Live
+            </div>
 
           </div>
 
-          <div className="w-14 h-14 rounded-2xl bg-indigo-100 flex items-center justify-center text-2xl">
-            ✅
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+
+            {/* Pie Chart */}
+
+            <div className="h-60 sm:h-72">
+
+              <ResponsiveContainer width="100%" height="100%">
+
+                <PieChart>
+
+                  <Pie
+                    data={attendanceData}
+                    dataKey="value"
+                    innerRadius={70}
+                    outerRadius={100}
+                    paddingAngle={5}
+                  >
+
+                    {attendanceData.map((item, index) => (
+
+                      <Cell
+                        key={index}
+                        fill={COLORS[index]}
+                      />
+
+                    ))}
+
+                  </Pie>
+
+                  <Tooltip
+                    formatter={(value, name) => [
+                      `${value} Students (${name === "Present"
+                        ? presentPercentage
+                        : absentPercentage}%)`,
+                      name,
+                    ]}
+                    contentStyle={{
+                      borderRadius: 14,
+                      border: "none",
+                      boxShadow: "0 10px 30px rgba(0,0,0,.08)",
+                    }}
+                  />
+
+                </PieChart>
+
+              </ResponsiveContainer>
+
+            </div>
+
+            {/* Statistics */}
+
+            <div className="space-y-4">
+
+              {/* Present */}
+
+              <div className="rounded-2xl bg-indigo-50 p-3">
+
+                <div className="flex justify-between items-center">
+
+                  <div>
+
+                    <p className="text-sm text-gray-500">
+                      Present Students
+                    </p>
+
+                    <h3 className="text-3xl font-bold text-indigo-700 mt-2">
+                      {presentPercentage}%
+                    </h3>
+
+                    <p className="text-sm text-gray-500 mt-1">
+                      {stats?.presentToday || 0} Students
+                    </p>
+
+                  </div>
+
+                  <div className="w-14 h-14 rounded-2xl bg-indigo-100 flex items-center justify-center text-2xl">
+                    ✅
+                  </div>
+
+                </div>
+
+              </div>
+
+              {/* Absent */}
+
+              <div className="rounded-2xl bg-amber-50 p-3">
+
+                <div className="flex justify-between items-center">
+
+                  <div>
+
+                    <p className="text-sm text-gray-500">
+                      Absent Students
+                    </p>
+
+                    <h3 className="text-3xl font-bold text-amber-600 mt-2">
+                      {absentPercentage}%
+                    </h3>
+
+                    <p className="text-sm text-gray-500 mt-1">
+                      {stats?.absentToday || 0} Students
+                    </p>
+
+                  </div>
+
+                  <div className="w-14 h-14 rounded-2xl bg-amber-100 flex items-center justify-center text-2xl">
+                    📋
+                  </div>
+
+                </div>
+
+              </div>
+
+              {/* Progress */}
+
+              <div className="rounded-xl border border-gray-200 p-3">
+
+                <div className="flex justify-between mb-3">
+
+                  <span className="text-sm text-gray-500">
+                    Overall Attendance
+                  </span>
+
+                  <span className="font-semibold text-indigo-700">
+                    {presentPercentage}%
+                  </span>
+
+                </div>
+
+                <div className="h-3 rounded-full bg-gray-100 overflow-hidden">
+
+                  <div
+                    className="h-full rounded-full bg-indigo-600 transition-all duration-500"
+                    style={{
+                      width: `${presentPercentage}%`,
+                    }}
+                  />
+
+                </div>
+
+              </div>
+
+              {/* Insight */}
+
+              <div className="rounded-xl bg-gray-50 border border-gray-200 p-4">
+
+                <p className="text-sm text-gray-500">
+                  Attendance Status
+                </p>
+
+                <h4 className="font-semibold text-gray-800 mt-2">
+
+                  {presentPercentage >= 90
+                    ? "Excellent Attendance 🎉"
+                    : presentPercentage >= 75
+                      ? "Good Attendance 👍"
+                      : presentPercentage >= 50
+                        ? "Average Attendance 🙂"
+                        : "Attendance Needs Improvement"}
+
+                </h4>
+
+              </div>
+
+            </div>
+
           </div>
 
         </div>
-
-      </div>
-
-      {/* Absent */}
-
-      <div className="rounded-2xl bg-amber-50 p-3">
-
-        <div className="flex justify-between items-center">
-
-          <div>
-
-            <p className="text-sm text-gray-500">
-              Absent Students
-            </p>
-
-            <h3 className="text-3xl font-bold text-amber-600 mt-2">
-              {absentPercentage}%
-            </h3>
-
-            <p className="text-sm text-gray-500 mt-1">
-              {stats?.absentToday || 0} Students
-            </p>
-
-          </div>
-
-          <div className="w-14 h-14 rounded-2xl bg-amber-100 flex items-center justify-center text-2xl">
-            📋
-          </div>
-
-        </div>
-
-      </div>
-
-      {/* Progress */}
-
-      <div className="rounded-xl border border-gray-200 p-3">
-
-        <div className="flex justify-between mb-3">
-
-          <span className="text-sm text-gray-500">
-            Overall Attendance
-          </span>
-
-          <span className="font-semibold text-indigo-700">
-            {presentPercentage}%
-          </span>
-
-        </div>
-
-        <div className="h-3 rounded-full bg-gray-100 overflow-hidden">
-
-          <div
-            className="h-full rounded-full bg-indigo-600 transition-all duration-500"
-            style={{
-              width: `${presentPercentage}%`,
-            }}
-          />
-
-        </div>
-
-      </div>
-
-      {/* Insight */}
-
-      <div className="rounded-xl bg-gray-50 border border-gray-200 p-4">
-
-        <p className="text-sm text-gray-500">
-          Attendance Status
-        </p>
-
-        <h4 className="font-semibold text-gray-800 mt-2">
-
-          {presentPercentage >= 90
-            ? "Excellent Attendance 🎉"
-            : presentPercentage >= 75
-            ? "Good Attendance 👍"
-            : presentPercentage >= 50
-            ? "Average Attendance 🙂"
-            : "Attendance Needs Improvement"}
-
-        </h4>
-
-      </div>
-
-    </div>
-
-  </div>
-
-</div>
       </div>
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         {/* ================= QUICK ACTIONS ================= */}
@@ -631,7 +631,7 @@ const attendanceData = [
                   />
                 </div>
 
-                <span className="font-medium text-gray-700">
+                <span className="font-medium text-gray-700 text-sm sm:text-base">
                   Manage Students
                 </span>
 
@@ -654,7 +654,7 @@ const attendanceData = [
                   />
                 </div>
 
-                <span className="font-medium text-gray-700">
+                <span className="font-medium text-gray-700 text-sm sm:text-base">
                   Manage Teachers
                 </span>
 
@@ -677,7 +677,7 @@ const attendanceData = [
                   />
                 </div>
 
-                <span className="font-medium text-gray-700">
+                <span className="font-medium text-gray-700 text-sm sm:text-base">
                   Manage Classes
                 </span>
 
@@ -700,7 +700,7 @@ const attendanceData = [
                   />
                 </div>
 
-                <span className="font-medium text-gray-700">
+                <span className="font-medium text-gray-700 text-sm sm:text-base">
                   Announcements
                 </span>
 
@@ -753,7 +753,7 @@ const attendanceData = [
 
                   {/* Header */}
 
-                  <div className="flex items-start justify-between gap-4">
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
 
                     <div className="flex items-center gap-3">
 
@@ -788,13 +788,13 @@ const attendanceData = [
 
                   {/* Message */}
 
-                  <p className="mt-4 text-gray-600 leading-7 line-clamp-3">
+                  <p className="mt-4 text-sm sm:text-base text-gray-600 leading-6 sm:leading-7 line-clamp-3">
                     {item.message}
                   </p>
 
                   {/* Footer */}
 
-                  <div className="mt-5 flex items-center justify-between border-t border-gray-100 pt-4">
+                  <div className="mt-5 flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between border-t border-gray-100 pt-4">
 
                     <span className="text-sm text-gray-500">
 
