@@ -1,54 +1,86 @@
-# School ERP
+# 🏫 School ERP
 
-A full-stack, role-based School ERP (Enterprise Resource Planning) web app for managing day-to-day school operations — classes, attendance, timetables, and announcements — with separate portals for Admins, Teachers, Students, and Parents.
+A full-stack, role-based School ERP (Enterprise Resource Planning) web app for managing day-to-day school operations — attendance, timetables, results, fees, and announcements — with dedicated portals for **Admins**, **Teachers**, and **Students**.
 
-> **Status:** Work in progress. Core modules (auth, classes, attendance, timetable, announcements) are functional. Exam/results and full parent-portal APIs are still being built — see [Roadmap](#roadmap).
+**🔗 Live demo:** [school-erp-eta-lilac.vercel.app](https://school-erp-eta-lilac.vercel.app/)
 
-## Features
+> **Demo login:** `admin@gmail.com` / `admin123` *(seeded admin account — see [Getting Started](#getting-started) to create your own)*
 
-- **Authentication & Authorization** — JWT-based login with bcrypt-hashed passwords and role-based access control (admin / teacher / student / parent) enforced via middleware.
-- **Admin Portal**
-  - Create and manage user accounts (students, teachers, parents)
-  - Create, view, and delete classes
-  - Assign/remove students and teachers to/from classes
-  - Dashboard with class and attendance stats
-- **Teacher Portal**
-  - View assigned classes and class details
-  - Mark and view attendance for a class
-  - View and manage timetable
-  - Post announcements
-- **Student Portal**
-  - View personal attendance, timetable, and profile
-  - View school announcements
-- **Attendance** — mark attendance by class/date, and query by student, by date, or full class history.
-- **Timetable** — admin-managed timetables, viewable per class, per teacher, or per student.
-- **Announcements** — role-restricted creation (admin/teacher), visible to all authenticated users.
+---
 
-## Tech Stack
+## ✨ Features
 
-**Frontend:** React 19, Vite, React Router, Tailwind CSS, Axios, Recharts, react-calendar
-**Backend:** Node.js, Express 5, MongoDB with Mongoose, JSON Web Tokens, bcryptjs
+### 🔐 Authentication & Authorization
+- JWT-based login with bcrypt-hashed passwords
+- Role-based access control (`admin` / `teacher` / `student` / `parent`*) enforced via Express middleware
 
-## Project Structure
+### 🛠️ Admin Portal
+- Create and manage user accounts (students & teachers)
+- Create, view, and delete classes; assign/remove students and teachers
+- Mark and review attendance across classes
+- Build and publish timetables
+- Set and manage class fees, and mark fees as paid
+- Post announcements
+- Dashboard with class, attendance, and fee stats
+
+### 👩‍🏫 Teacher Portal
+- View assigned classes and class rosters
+- Mark and view attendance for a class
+- Enter and update student results by class, subject, and exam
+- View timetables
+- View fee status for their classes
+- Post announcements
+
+### 🎓 Student Portal
+- View personal attendance history and timetable
+- View exam results
+- View personal fee status
+- View school announcements
+- Manage personal profile
+
+*\* Parent role exists in the data model and has a placeholder dashboard on the frontend, but the corresponding backend API is not yet implemented — see [Roadmap](#roadmap).*
+
+---
+
+## 🧱 Tech Stack
+
+| Layer | Technologies |
+|---|---|
+| **Frontend** | React 19, Vite, React Router 7, Tailwind CSS 4, Axios, Recharts, react-calendar, lucide-react |
+| **Backend** | Node.js, Express 5, MongoDB with Mongoose, JSON Web Tokens, bcryptjs |
+| **Deployment** | Vercel (frontend) |
+
+---
+
+## 📂 Project Structure
 
 ```
 School-ERP/
-├── client/          # React + Vite frontend
+├── client/                  # React + Vite frontend
 │   └── src/
-│       ├── pages/   # Admin, Teacher, Student page views
-│       ├── Context/ # Auth context
-│       ├── routes/  # Protected route wrapper
-│       └── services/# Axios API client
-└── server/          # Express backend
+│       ├── pages/
+│       │   ├── Admin/       # Dashboard, Students, Teachers, Classes,
+│       │   │                #   Attendance, Timetable, Fees, Announcements
+│       │   ├── Teacher/     # Dashboard, My Classes, Attendance,
+│       │   │                #   Results, Timetable, Fees, Announcements
+│       │   └── Student/     # Dashboard, Attendance, Results, Timetable,
+│       │                    #   Fees, Announcements, Profile
+│       ├── Context/         # Auth context
+│       ├── routes/          # Protected route wrapper
+│       └── services/        # Axios API client
+└── server/                  # Express backend
     └── src/
         ├── controllers/
-        ├── middleware/  # JWT auth + role-based access
-        ├── models/      # Mongoose schemas
+        ├── middleware/      # JWT auth + role-based access
+        ├── models/          # User, Student, Teacher, Class, Attendance,
+        │                     #   Timetable, Result, Fee, Announcement
         ├── routes/
-        └── seed/        # Admin seed script
+        └── seed/            # Admin seed script
 ```
 
-## Getting Started
+---
+
+## 🚀 Getting Started
 
 ### Prerequisites
 - Node.js (v18+)
@@ -88,12 +120,23 @@ npm run dev
 ```bash
 cd ../client
 npm install
+```
+
+Create a `.env` file in `client/`:
+```env
+VITE_API_URL=http://localhost:5000/api
+```
+
+Start the dev server:
+```bash
 npm run dev
 ```
 
-The client runs on Vite's default port (`http://localhost:5173`) and the API on `http://localhost:5000`.
+The client runs on Vite's default port (`http://localhost:5173`) and talks to the API on `http://localhost:5000`.
 
-## API Overview
+---
+
+## 🔌 API Overview
 
 | Route | Description |
 |---|---|
@@ -102,25 +145,26 @@ The client runs on Vite's default port (`http://localhost:5173`) and the API on 
 | `/api/class` | Class CRUD, student/teacher assignment |
 | `/api/attendance` | Mark & fetch attendance |
 | `/api/timetable` | Create/fetch timetables |
+| `/api/result` | Enter results, fetch by student/class/sheet |
+| `/api/fee` | Set class fees, fetch, mark as paid |
 | `/api/announcement` | Create/fetch/delete announcements |
 | `/api/admin` | Admin dashboard stats |
 | `/api/teacher` | Teacher dashboard |
 
 All routes except `/api/auth/login` require a `Bearer` JWT and enforce role-based access.
 
-## Roadmap
- 
-- [ ] Exam & results / grading module
-- [ ] Parent portal backend endpoints
-- [ ] Fee management
+---
+
+## 🗺️ Roadmap
+
+- [ ] Parent portal backend endpoints (frontend dashboard exists as a placeholder)
 - [ ] Notifications
-- [ ] Deployment guide (Docker / cloud hosting)
+- [ ] Automated tests
+- [ ] Containerized / cloud deployment guide for the backend
+
+---
 
 
-## Contributing
-
-This is a learning/portfolio project and still evolving. Issues and PRs are welcome.
-
-## License
+## 📄 License
 
 No license specified yet — all rights reserved by default until one is added.
