@@ -472,190 +472,235 @@ const Attendance = () => {
 
                         </div>
 
-                    ) :  filteredStudents.length === 0 ? (
+                    ) : filteredStudents.length === 0 ? (
 
-                    <div className="py-20 text-center">
+                        <div className="py-20 text-center">
 
-                        <Users
-                            size={40}
-                            className="mx-auto text-gray-300"
-                        />
+                            <Users
+                                size={40}
+                                className="mx-auto text-gray-300"
+                            />
 
-                        <h3 className="mt-4 text-xl font-semibold text-gray-700">
-                            No Student Found
-                        </h3>
+                            <h3 className="mt-4 text-xl font-semibold text-gray-700">
+                                No Student Found
+                            </h3>
 
-                        <p className="mt-2 text-gray-500">
-                            Try searching with another name or email.
-                        </p>
+                            <p className="mt-2 text-gray-500">
+                                Try searching with another name or email.
+                            </p>
 
-                    </div>
+                        </div>
 
                     ) : (
 
-                    <>
-                        {/* Table */}
+                        <>
+                            {/* Table */}
+                            <div className="md:hidden space-y-3 p-3">
+                                {filteredStudents.map((student) => {
+                                    const current =
+                                        attendance.find(
+                                            (a) =>
+                                                (typeof a.student === "object"
+                                                    ? a.student._id
+                                                    : a.student) === student._id
+                                        ) || {};
 
-                        <div className="overflow-x-auto">
+                                    return (
+                                        <div
+                                            key={student._id}
+                                            className="rounded-xl border border-gray-200 p-4 bg-white"
+                                        >
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center font-bold text-indigo-700">
+                                                    {student.name?.charAt(0).toUpperCase()}
+                                                </div>
 
-                            <table className="min-w-full">
+                                                <div className="flex-1">
+                                                    <h4 className="font-semibold">{student.name}</h4>
+                                                    <p className="text-sm text-gray-500 break-all">
+                                                        {student.email}
+                                                    </p>
+                                                </div>
+                                            </div>
 
-                                <thead className="sticky top-0 bg-gray-50 border-b">
-
-                                    <tr>
-
-                                        <th className="text-left px-6 py-4 text-gray-600">
-                                            Student
-                                        </th>
-
-                                        <th className="text-left px-6 py-4 text-gray-600">
-                                            Email
-                                        </th>
-
-                                        <th className="text-center px-6 py-4 text-gray-600">
-                                            Status
-                                        </th>
-
-                                    </tr>
-
-                                </thead>
-
-                                <tbody>
-
-                                    {filteredStudents.map((student) => {
-
-                                        const current =
-                                            attendance.find(
-                                                (a) =>
-                                                    (typeof a.student === "object"
-                                                        ? a.student._id
-                                                        : a.student) === student._id
-                                            ) || {};
-
-                                        return (
-
-                                            <tr
-                                                key={student._id}
-                                                className="border-b last:border-0 hover:bg-gray-50 transition"
+                                            <select
+                                                value={current.status || "present"}
+                                                onChange={(e) =>
+                                                    handleStatusChange(student._id, e.target.value)
+                                                }
+                                                className={`mt-4 w-full rounded-lg border px-3 py-2 font-semibold ${current.status === "absent"
+                                                        ? "bg-red-50 border-red-200 text-red-700"
+                                                        : "bg-green-50 border-green-200 text-green-700"
+                                                    }`}
                                             >
+                                                <option value="present">✅ Present</option>
+                                                <option value="absent">❌ Absent</option>
+                                            </select>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                            <div className="hidden md:block overflow-x-auto">
 
-                                                {/* Student */}
 
-                                                <td className="px-6 py-4">
+                                <table className="min-w-full">
 
-                                                    <div className="flex items-center gap-4">
+                                    <thead className="sticky top-0 bg-gray-50 border-b">
 
-                                                        <div className="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center font-bold text-indigo-700">
+                                        <tr>
 
-                                                            {student.name?.charAt(0).toUpperCase()}
+                                            <th className="text-left px-6 py-4 text-gray-600">
+                                                Student
+                                            </th>
+
+                                            <th className="text-left px-6 py-4 text-gray-600">
+                                                Email
+                                            </th>
+
+                                            <th className="text-center px-6 py-4 text-gray-600">
+                                                Status
+                                            </th>
+
+                                        </tr>
+
+                                    </thead>
+
+                                    <tbody>
+
+                                        {filteredStudents.map((student) => {
+
+                                            const current =
+                                                attendance.find(
+                                                    (a) =>
+                                                        (typeof a.student === "object"
+                                                            ? a.student._id
+                                                            : a.student) === student._id
+                                                ) || {};
+
+                                            return (
+
+                                                <tr
+                                                    key={student._id}
+                                                    className="border-b last:border-0 hover:bg-gray-50 transition"
+                                                >
+
+                                                    {/* Student */}
+
+                                                    <td className="px-6 py-4">
+
+                                                        <div className="flex items-center gap-4">
+
+                                                            <div className="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center font-bold text-indigo-700">
+
+                                                                {student.name?.charAt(0).toUpperCase()}
+
+                                                            </div>
+
+                                                            <div>
+
+                                                                <h4 className="font-semibold text-gray-900">
+
+                                                                    {student.name}
+
+                                                                </h4>
+
+                                                                <p className="text-sm text-gray-500">
+
+                                                                    Student
+
+                                                                </p>
+
+                                                            </div>
 
                                                         </div>
 
-                                                        <div>
+                                                    </td>
 
-                                                            <h4 className="font-semibold text-gray-900">
+                                                    {/* Email */}
 
-                                                                {student.name}
+                                                    <td className="px-6 py-4 text-gray-500">
 
-                                                            </h4>
+                                                        {student.email}
 
-                                                            <p className="text-sm text-gray-500">
+                                                    </td>
 
-                                                                Student
+                                                    {/* Status */}
 
-                                                            </p>
+                                                    <td className="px-6 py-4 text-center">
 
-                                                        </div>
+                                                        <select
 
-                                                    </div>
+                                                            value={current.status || "present"}
 
-                                                </td>
+                                                            onChange={(e) =>
+                                                                handleStatusChange(
+                                                                    student._id,
+                                                                    e.target.value
+                                                                )
+                                                            }
 
-                                                {/* Email */}
-
-                                                <td className="px-6 py-4 text-gray-500">
-
-                                                    {student.email}
-
-                                                </td>
-
-                                                {/* Status */}
-
-                                                <td className="px-6 py-4 text-center">
-
-                                                    <select
-
-                                                        value={current.status || "present"}
-
-                                                        onChange={(e) =>
-                                                            handleStatusChange(
-                                                                student._id,
-                                                                e.target.value
-                                                            )
-                                                        }
-
-                                                        className={`rounded-xl px-4 py-2 border font-semibold transition
+                                                            className={`rounded-xl px-4 py-2 border font-semibold transition
 
                       ${current.status === "absent"
 
-                                                                ? "bg-red-50 border-red-200 text-red-700"
+                                                                    ? "bg-red-50 border-red-200 text-red-700"
 
-                                                                : "bg-green-50 border-green-200 text-green-700"
+                                                                    : "bg-green-50 border-green-200 text-green-700"
 
-                                                            }`}
-                                                    >
+                                                                }`}
+                                                        >
 
-                                                        <option value="present">
-                                                            ✅ Present
-                                                        </option>
+                                                            <option value="present">
+                                                                ✅ Present
+                                                            </option>
 
-                                                        <option value="absent">
-                                                            ❌ Absent
-                                                        </option>
+                                                            <option value="absent">
+                                                                ❌ Absent
+                                                            </option>
 
-                                                    </select>
+                                                        </select>
 
-                                                </td>
+                                                    </td>
 
-                                            </tr>
+                                                </tr>
 
-                                        );
+                                            );
 
-                                    })}
+                                        })}
 
-                                </tbody>
+                                    </tbody>
 
-                            </table>
-
-                        </div>
-
-                        {/* Footer */}
-
-                        <div className="flex justify-between items-center px-6 py-5 border-t bg-gray-50">
-
-                            <div className="text-sm text-gray-500">
-
-                                Showing {filteredStudents.length} of {students.length} student(s)
+                                </table>
 
                             </div>
 
-                            <button
+                            {/* Footer */}
 
-                                onClick={handleSubmit}
+                            <div className="flex justify-between items-center px-6 py-5 border-t bg-gray-50">
 
-                                disabled={saving}
+                                <div className="text-sm text-gray-500">
 
-                                className="bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300 text-white px-8 py-3 rounded-xl font-semibold transition shadow-sm hover:shadow-md"
+                                    Showing {filteredStudents.length} of {students.length} student(s)
 
-                            >
+                                </div>
 
-                                {saving ? "Saving..." : "Save Attendance"}
+                                <button
 
-                            </button>
+                                    onClick={handleSubmit}
 
-                        </div>
+                                    disabled={saving}
 
-                    </>
+                                    className="bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300 text-white px-8 py-3 rounded-xl font-semibold transition shadow-sm hover:shadow-md"
+
+                                >
+
+                                    {saving ? "Saving..." : "Save Attendance"}
+
+                                </button>
+
+                            </div>
+
+                        </>
 
                     )}
 

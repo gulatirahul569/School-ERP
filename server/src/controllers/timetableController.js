@@ -6,6 +6,27 @@ const Class = require("../models/Class");
 exports.createOrUpdateTimetable = async (req, res) => {
   try {
     const { classId, day, periods } = req.body;
+    // Check teacher availability
+    for (const period of periods) {
+      if (!period.teacher) continue;
+
+      const clash = await Timetable.findOne({
+        day,
+        classId: { $ne: classId }, // ignore current class
+        periods: {
+          $elemMatch: {
+            periodNo: period.periodNo,
+            teacher: period.teacher,
+          },
+        },
+      }).populate("classId", "name section");
+
+      if (clash) {
+        return res.status(400).json({
+          message: `${period.subject} teacher is already assigned to Class ${clash.classId.name}-${clash.classId.section} during Period ${period.periodNo}.`,
+        });
+      }
+    }
 
     let timetable = await Timetable.findOne({ classId, day });
 
