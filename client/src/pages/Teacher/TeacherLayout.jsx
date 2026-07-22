@@ -115,7 +115,7 @@ const TeacherLayout = () => {
       </aside>
 
       {/* CONTENT */}
-      <main className="md:ml-64 p-6 min-h-screen bg-[#F4F6FB]">
+      <main className="md:ml-64 p-3 sm:p-5 lg:p-5 min-h-screen bg-[#F4F6FB]">
         <Outlet />
       </main>
     </div>
