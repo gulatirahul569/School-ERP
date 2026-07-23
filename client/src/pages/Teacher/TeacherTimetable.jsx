@@ -41,13 +41,7 @@ const TeacherTimetable = () => {
     fetchTimetable();
   }, []);
 
-  // Create timetable map
-  // NOTE: The API returns ONE document per (class, day) pair, filtered to
-  // this teacher's periods within that class. A teacher can appear in
-  // multiple documents for the SAME day (e.g. Period 1 for Class 9-A and
-  // Period 2 for Class 10-B, both on Monday). So we must MERGE periods
-  // into the existing day map instead of replacing it, or earlier classes
-  // for that day get wiped out.
+  // Merge timetable by day and period
   const timetableMap = {};
 
   timetable.forEach((dayData) => {
@@ -72,24 +66,32 @@ const TeacherTimetable = () => {
   }
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Header */}
-      <div className="bg-linear-to-r from-indigo-500 to-purple-600 text-white p-6 rounded-2xl shadow">
-        <h1 className="text-2xl font-bold">📅 My Timetable</h1>
-        <p className="text-white/80 mt-1">
+    <div className="p-3 sm:p-4 md:p-6 space-y-5">
+            {/* Header */}
+      <div className="bg-linear-to-r from-black to-gray-500 text-white p-4 sm:p-6 rounded-2xl shadow">
+        <h1 className="text-xl sm:text-2xl font-bold">
+          📅 My Timetable
+        </h1>
+
+        <p className="text-white/80 mt-1 text-sm sm:text-base">
           View your assigned teaching schedule
         </p>
       </div>
 
-      {/* Timetable */}
-      <div className="overflow-x-auto bg-white rounded-2xl shadow border">
-        <table className="w-full border-collapse">
+      {/* Desktop / Tablet Table */}
+      <div className="hidden md:block overflow-x-auto bg-white rounded-2xl shadow border">
+        <table className="w-full min-w-225 border-collapse">
           <thead>
             <tr className="bg-gray-100">
-              <th className="p-3 border">Period</th>
+              <th className="border px-4 py-3 text-left font-semibold">
+                Period
+              </th>
 
               {DAYS.map((day) => (
-                <th key={day} className="p-3 border">
+                <th
+                  key={day}
+                  className="border px-4 py-3 text-center font-semibold whitespace-nowrap"
+                >
                   {day}
                 </th>
               ))}
@@ -99,18 +101,18 @@ const TeacherTimetable = () => {
           <tbody>
             {TIME_SLOTS.map((slot) => (
               <tr key={slot.periodNo} className="text-center">
-                {/* Time Column */}
-                <td className="border p-3 bg-gray-50">
+                {/* Period Column */}
+                <td className="border px-4 py-4 bg-gray-50">
                   <div className="font-semibold">
                     {slot.label}
                   </div>
 
-                  <div className="text-xs text-gray-500">
+                  <div className="text-xs text-gray-500 mt-1">
                     {slot.time}
                   </div>
                 </td>
 
-                {/* Day Columns */}
+                {/* Days */}
                 {DAYS.map((day) => {
                   const period =
                     timetableMap?.[day]?.[slot.periodNo];
@@ -118,22 +120,22 @@ const TeacherTimetable = () => {
                   return (
                     <td
                       key={day}
-                      className="border p-3 h-24 align-middle"
+                      className="border px-3 py-5 h-24 align-middle"
                     >
                       {period ? (
                         <div className="space-y-1">
-                          <p className="font-semibold text-gray-800">
+                          <p className="font-semibold text-gray-800 text-sm lg:text-base">
                             {period.subject}
                           </p>
 
-                          <p className="text-sm text-indigo-600 font-medium">
+                          <p className="text-xs lg:text-sm text-indigo-600 font-medium">
                             Class {period.classId?.name}
                             {period.classId?.section &&
                               ` - ${period.classId.section}`}
                           </p>
                         </div>
                       ) : (
-                        <span className="text-gray-300 text-lg">
+                        <span className="text-gray-300 text-xl">
                           —
                         </span>
                       )}
@@ -147,6 +149,62 @@ const TeacherTimetable = () => {
 
         {!loading && timetable.length === 0 && (
           <div className="text-center py-10 text-gray-500">
+            No timetable assigned.
+          </div>
+        )}
+      </div>
+            {/* Mobile View */}
+      <div className="md:hidden space-y-4">
+        {TIME_SLOTS.map((slot) => (
+          <div
+            key={slot.periodNo}
+            className="bg-white rounded-2xl shadow border overflow-hidden"
+          >
+            {/* Card Header */}
+            <div className="bg-linear-to-r from-black to-gray-500 text-white px-4 py-3">
+              <h3 className="font-semibold">{slot.label}</h3>
+              <p className="text-xs opacity-90">{slot.time}</p>
+            </div>
+
+            {/* Days */}
+            <div className="divide-y">
+              {DAYS.map((day) => {
+                const period =
+                  timetableMap?.[day]?.[slot.periodNo];
+
+                return (
+                  <div
+                    key={day}
+                    className="flex items-center justify-between gap-4 px-4 py-3"
+                  >
+                    <span className="font-medium text-gray-700 min-w-23">
+                      {day}
+                    </span>
+
+                    {period ? (
+                      <div className="text-right">
+                        <p className="font-semibold text-gray-800">
+                          {period.subject}
+                        </p>
+
+                        <p className="text-sm text-gray-600">
+                          Class {period.classId?.name}
+                          {period.classId?.section &&
+                            ` - ${period.classId.section}`}
+                        </p>
+                      </div>
+                    ) : (
+                      <span className="text-gray-400">—</span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+
+        {!loading && timetable.length === 0 && (
+          <div className="bg-white rounded-xl border shadow text-center py-8 text-gray-500">
             No timetable assigned.
           </div>
         )}
