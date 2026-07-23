@@ -153,62 +153,70 @@ const TeacherTimetable = () => {
           </div>
         )}
       </div>
-            {/* Mobile View */}
-      <div className="md:hidden space-y-4">
-        {TIME_SLOTS.map((slot) => (
-          <div
-            key={slot.periodNo}
-            className="bg-white rounded-2xl shadow border overflow-hidden"
-          >
-            {/* Card Header */}
-            <div className="bg-linear-to-r from-black to-gray-500 text-white px-4 py-3">
-              <h3 className="font-semibold">{slot.label}</h3>
-              <p className="text-xs opacity-90">{slot.time}</p>
-            </div>
-
-            {/* Days */}
-            <div className="divide-y">
-              {DAYS.map((day) => {
-                const period =
-                  timetableMap?.[day]?.[slot.periodNo];
-
-                return (
-                  <div
-                    key={day}
-                    className="flex items-center justify-between gap-4 px-4 py-3"
-                  >
-                    <span className="font-medium text-gray-700 min-w-23">
-                      {day}
-                    </span>
-
-                    {period ? (
-                      <div className="text-right">
-                        <p className="font-semibold text-gray-800">
-                          {period.subject}
-                        </p>
-
-                        <p className="text-sm text-gray-600">
-                          Class {period.classId?.name}
-                          {period.classId?.section &&
-                            ` - ${period.classId.section}`}
-                        </p>
-                      </div>
-                    ) : (
-                      <span className="text-gray-400">—</span>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        ))}
-
-        {!loading && timetable.length === 0 && (
-          <div className="bg-white rounded-xl border shadow text-center py-8 text-gray-500">
-            No timetable assigned.
-          </div>
-        )}
+{/* Mobile View */}
+<div className="md:hidden space-y-5">
+  {DAYS.map((day) => (
+    <div
+      key={day}
+      className="bg-white rounded-2xl shadow border overflow-hidden"
+    >
+      {/* Day Header */}
+      <div className="bg-linear-to-r from-black to-gray-500 text-white px-4 py-3">
+        <h2 className="text-lg font-bold">{day}</h2>
       </div>
+
+      {/* Period List */}
+      <div className="divide-y divide-gray-200">
+        {TIME_SLOTS.map((slot) => {
+          const period = timetableMap?.[day]?.[slot.periodNo];
+
+          return (
+            <div
+              key={slot.periodNo}
+              className="flex justify-between items-start p-4"
+            >
+              {/* Left */}
+              <div>
+                <p className="font-semibold text-gray-800">
+                  {slot.label}
+                </p>
+
+                <p className="text-xs text-gray-500">
+                  {slot.time}
+                </p>
+              </div>
+
+              {/* Right */}
+              {period ? (
+                <div className="text-right">
+                  <p className="font-semibold text-gray-900">
+                    {period.subject}
+                  </p>
+
+                  <p className="text-sm text-gray-600">
+                    Class {period.classId?.name}
+                    {period.classId?.section &&
+                      ` - ${period.classId.section}`}
+                  </p>
+                </div>
+              ) : (
+                <span className="text-gray-400 font-medium">
+                  Free
+                </span>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  ))}
+
+  {!loading && timetable.length === 0 && (
+    <div className="bg-white rounded-xl border shadow text-center py-8 text-gray-500">
+      No timetable assigned.
+    </div>
+  )}
+</div>
     </div>
   );
 };
