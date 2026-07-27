@@ -97,7 +97,7 @@ const openStudent = async (student) => {
 
         {/* STATS */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
-          <div className="bg-indigo-100 hover:bg-indigo-200 transition rounded-xl p-5">
+          <div className="bg-gray-100 hover:bg-gray-200 transition rounded-xl p-5">
             <p className="text-gray-600 text-sm">Students</p>
             <h2 className="text-3xl font-bold text-gray-600 mt-1">
               {classData.students?.length || 0}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "../../services/api";
 
-const Attendance = () => {
+const TeacherAttendance = () => {
   const [classes, setClasses] = useState([]);
   const [selectedClass, setSelectedClass] = useState("");
 
@@ -67,7 +67,7 @@ const Attendance = () => {
   const fetchClasses = async () => {
     try {
 
-      const res = await axios.get("/class");
+      const res = await axios.get("/class/my-classes");
 
 
       setClasses(
@@ -394,9 +394,9 @@ const Attendance = () => {
                 className="
                 w-full rounded-xl 
                 border-gray-300 
-                focus:border-indigo-500 
+                focus:border-gray-500 
                 focus:ring-2 
-                focus:ring-indigo-200 
+                focus:ring-gray-200 
                 px-4 py-3
                 "
 
@@ -470,9 +470,9 @@ const Attendance = () => {
                 className="
                 w-full rounded-xl 
                 border-gray-300 
-                focus:border-indigo-500 
+                focus:border-gray-500 
                 focus:ring-2 
-                focus:ring-indigo-200 
+                focus:ring-gray-200 
                 px-4 py-3
                 "
 
@@ -842,10 +842,10 @@ const Attendance = () => {
                       disabled={saving}
                       className="
                       px-6 py-3 rounded-xl 
-                      bg-indigo-600 
-                      hover:bg-indigo-700 
+                      bg-gray-600 
+                      hover:bg-gray-700 
                       text-white font-medium
-                      disabled:bg-indigo-300
+                      disabled:bg-gray-300
                       "
                     >
                       {
@@ -866,4 +866,4 @@ const Attendance = () => {
 };
 
 
-export default Attendance;
+export default TeacherAttendance;

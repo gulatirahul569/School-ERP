@@ -334,8 +334,8 @@ const Result = () => {
       title: "Students",
       value: totalStudents,
       icon: "👨‍🎓",
-      bg: "bg-indigo-50",
-      iconBg: "bg-indigo-100",
+      bg: "bg-gray-50",
+      iconBg: "bg-gray-100",
     },
     {
       title: "Average",
@@ -364,7 +364,7 @@ const Result = () => {
       {/* ================= HEADER ================= */}
       <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-6">
         <div>
-          <p className="text-sm font-medium text-indigo-600 uppercase tracking-wide">
+          <p className="text-sm font-medium text-gray-600 uppercase tracking-wide">
             Teacher Portal
           </p>
 
@@ -394,7 +394,7 @@ const Result = () => {
           {/* <button
             onClick={handleSubmit}
             disabled={saving}
-            className="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-7 py-3 text-white font-semibold shadow-sm transition-all hover:bg-indigo-700 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+            className="inline-flex items-center justify-center rounded-xl bg-gray-600 px-7 py-3 text-white font-semibold shadow-sm transition-all hover:bg-gray-700 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {saving ? "Saving Results..." : "Save Results"}
           </button> */}
@@ -474,7 +474,7 @@ const Result = () => {
             </p>
           </div>
 
-          <span className="rounded-full bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-600">
+          <span className="rounded-full bg-gray-50 px-4 py-2 text-sm font-semibold text-gray-600">
             Result Sheet
           </span>
         </div>
@@ -491,7 +491,7 @@ const Result = () => {
               <select
                 value={selectedClass}
                 onChange={(e) => setSelectedClass(e.target.value)}
-                className="h-12 w-full rounded-xl border border-gray-200 bg-gray-50 px-4 text-gray-700 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100"
+                className="h-12 w-full rounded-xl border border-gray-200 bg-gray-50 px-4 text-gray-700 outline-none transition focus:border-gray-500 focus:bg-white focus:ring-4 focus:ring-gray-100"
               >
                 <option value="">Select Class</option>
 
@@ -513,7 +513,7 @@ const Result = () => {
               <select
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
-                className="h-12 w-full rounded-xl border border-gray-200 bg-gray-50 px-4 text-gray-700 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100"
+                className="h-12 w-full rounded-xl border border-gray-200 bg-gray-50 px-4 text-gray-700 outline-none transition focus:border-gray-500 focus:bg-white focus:ring-4 focus:ring-gray-100"
               >
                 <option value="">Select Subject</option>
 
@@ -534,7 +534,7 @@ const Result = () => {
               <select
                 value={examType}
                 onChange={(e) => setExamType(e.target.value)}
-                className="h-12 w-full rounded-xl border border-gray-200 bg-gray-50 px-4 text-gray-700 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100"
+                className="h-12 w-full rounded-xl border border-gray-200 bg-gray-50 px-4 text-gray-700 outline-none transition focus:border-gray-500 focus:bg-white focus:ring-4 focus:ring-gray-100"
               >
                 {EXAM_TYPES.map((type) => (
                   <option key={type} value={type}>
@@ -555,7 +555,7 @@ const Result = () => {
                 min={1}
                 value={maxMarks}
                 onChange={(e) => setMaxMarks(e.target.value)}
-                className="h-12 w-full rounded-xl border border-gray-200 bg-gray-50 px-4 text-gray-700 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100"
+                className="h-12 w-full rounded-xl border border-gray-200 bg-gray-50 px-4 text-gray-700 outline-none transition focus:border-gray-500 focus:bg-white focus:ring-4 focus:ring-gray-100"
               />
             </div>
 
@@ -571,7 +571,7 @@ const Result = () => {
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search by name or email..."
-                  className="h-12 w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 text-gray-700 outline-none transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100"
+                  className="h-12 w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 text-gray-700 outline-none transition focus:border-gray-500 focus:bg-white focus:ring-4 focus:ring-gray-100"
                 />
 
                 <svg
@@ -605,12 +605,12 @@ const Result = () => {
             Class Average
           </p>
 
-          <h2 className="mt-2 text-4xl font-bold text-indigo-600">
+          <h2 className="mt-2 text-4xl font-bold text-gray-600">
             {classAverage}%
           </h2>
         </div>
 
-        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50 text-2xl">
+        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-50 text-2xl">
           📊
         </div>
       </div>
@@ -623,7 +623,7 @@ const Result = () => {
 
         <div className="h-3 overflow-hidden rounded-full bg-gray-100">
           <div
-            className="h-full rounded-full bg-indigo-600 transition-all duration-500"
+            className="h-full rounded-full bg-gray-600 transition-all duration-500"
             style={{ width: `${classAverage}%` }}
           />
         </div>
@@ -742,12 +742,12 @@ const Result = () => {
 
       <div className="flex flex-wrap items-center gap-3">
 
-        <div className="rounded-xl border border-indigo-100 bg-indigo-50 px-4 py-2">
-          <p className="text-xs font-medium uppercase tracking-wide text-indigo-500">
+        <div className="rounded-xl border border-gray-100 bg-gray-50 px-4 py-2">
+          <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
             Exam
           </p>
 
-          <p className="font-semibold text-indigo-700">
+          <p className="font-semibold text-gray-700">
             {examType}
           </p>
         </div>
@@ -800,7 +800,7 @@ const Result = () => {
         >
           {/* Header */}
           <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-indigo-100 font-bold text-indigo-700">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 font-bold text-gray-700">
               {student.name
                 ?.split(" ")
                 .map((n) => n[0])
@@ -892,7 +892,7 @@ const Result = () => {
 
           <div className="flex flex-col items-center gap-4">
 
-            <div className="h-12 w-12 animate-spin rounded-full border-4 border-indigo-200 border-t-indigo-600"></div>
+            <div className="h-12 w-12 animate-spin rounded-full border-4 border-gray-200 border-t-gray-600"></div>
 
             <p className="text-gray-500 font-medium">
               Loading students...
@@ -975,7 +975,7 @@ const Result = () => {
   return (
     <tr
       key={student._id}
-      className="transition-all duration-200 hover:bg-indigo-50/40"
+      className="transition-all duration-200 hover:bg-gray-50/40"
     >
       {/* SERIAL */}
       <td className="px-6 py-5 font-semibold text-gray-500">
@@ -986,7 +986,7 @@ const Result = () => {
       <td className="px-6 py-5">
         <div className="flex items-center gap-4">
 
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-100 text-sm font-bold text-indigo-700">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-100 text-sm font-bold text-gray-700">
             {student.name
               ?.split(" ")
               .map((n) => n[0])
@@ -1030,7 +1030,7 @@ const Result = () => {
               onChange={(e) =>
                 handleMarksChange(student._id, e.target.value)
               }
-              className="h-11 w-24 rounded-xl border border-gray-200 bg-white text-center font-semibold shadow-sm transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
+              className="h-11 w-24 rounded-xl border border-gray-200 bg-white text-center font-semibold shadow-sm transition focus:border-gray-500 focus:ring-4 focus:ring-gray-100"
             />
 
             <span className="rounded-lg bg-gray-100 px-3 py-2 text-sm font-medium text-gray-600">
@@ -1090,7 +1090,7 @@ const Result = () => {
             handleRemarksChange(student._id, e.target.value)
           }
           placeholder="Add remarks..."
-          className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm transition focus:border-indigo-500 focus:bg-white focus:ring-4 focus:ring-indigo-100"
+          className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm transition focus:border-gray-500 focus:bg-white focus:ring-4 focus:ring-gray-100"
         />
 
       </td>
@@ -1116,7 +1116,7 @@ const Result = () => {
               <button
                 onClick={handleSubmit}
                 disabled={saving}
-                className="px-8 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-8 py-3 rounded-xl bg-gray-600 hover:bg-gray-700 text-white font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {saving ? "Saving..." : "Save Results"}
               </button>

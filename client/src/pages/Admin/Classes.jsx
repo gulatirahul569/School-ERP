@@ -172,8 +172,8 @@ const Classes = () => {
       title: "Total Students",
       value: students.length,
       icon: Users,
-      color: "bg-indigo-100",
-      text: "text-indigo-600",
+      color: "bg-gray-100",
+      text: "text-gray-600",
     },
     {
       title: "Available Teachers",
@@ -211,11 +211,11 @@ const Classes = () => {
 
             <div className="flex items-center gap-3">
 
-              <div className="w-14 h-14 rounded-2xl bg-indigo-100 flex items-center justify-center">
+              <div className="w-14 h-14 rounded-2xl bg-gray-100 flex items-center justify-center">
 
                 <BookOpen
                   size={28}
-                  className="text-indigo-600"
+                  className="text-gray-600"
                 />
 
               </div>
@@ -306,11 +306,11 @@ const Classes = () => {
 
             </div>
 
-            <div className="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center">
 
               <School
                 size={24}
-                className="text-indigo-600"
+                className="text-gray-600"
               />
 
             </div>
@@ -340,7 +340,7 @@ const Classes = () => {
                     name: e.target.value,
                   })
                 }
-                className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-gray-500 focus:border-gray-500 outline-none transition"
               />
 
             </div>
@@ -365,7 +365,7 @@ const Classes = () => {
                     section: e.target.value,
                   })
                 }
-                className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                className="w-full rounded-xl border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-gray-500 focus:border-gray-500 outline-none transition"
               />
 
             </div>
@@ -376,7 +376,7 @@ const Classes = () => {
 
               <button
                 type="submit"
-                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl py-3 font-semibold transition-all duration-300 shadow-sm hover:shadow-md"
+                className="w-full bg-gray-600 hover:bg-gray-700 text-white rounded-xl py-3 font-semibold transition-all duration-300 shadow-sm hover:shadow-md"
               >
                 + Create Class
               </button>
@@ -400,13 +400,13 @@ const Classes = () => {
                   placeholder="Search class or section..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none"
+                  className="border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-gray-500 outline-none"
                 />
 
                 <select
                   value={sectionFilter}
                   onChange={(e) => setSectionFilter(e.target.value)}
-                  className="border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none"
+                  className="border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-gray-500 outline-none"
                 >
 
                   <option value="all">
@@ -470,11 +470,11 @@ const Classes = () => {
 
                     <div className="flex gap-4">
 
-                      <div className="w-14 h-14 rounded-2xl bg-indigo-100 flex items-center justify-center">
+                      <div className="w-14 h-14 rounded-2xl bg-gray-100 flex items-center justify-center">
 
                         <School
                           size={28}
-                          className="text-indigo-600"
+                          className="text-gray-600"
                         />
 
                       </div>
@@ -487,7 +487,7 @@ const Classes = () => {
 
                         <div className="flex items-center gap-3 mt-2">
 
-                          <span className="px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 text-xs font-semibold">
+                          <span className="px-3 py-1 rounded-full bg-gray-100 text-gray-700 text-xs font-semibold">
                             Section {cls.section}
                           </span>
 
@@ -552,7 +552,7 @@ const Classes = () => {
 
                 <div className="p-6">
 
-                  <div className="rounded-2xl bg-indigo-50 border border-indigo-100 p-5">
+                  <div className="rounded-2xl bg-gray-50 border border-gray-100 p-5">
 
                     <div className="flex items-center justify-between mb-4">
 
@@ -562,7 +562,7 @@ const Classes = () => {
 
                       <GraduationCap
                         size={22}
-                        className="text-indigo-600"
+                        className="text-gray-600"
                       />
 
                     </div>
@@ -622,7 +622,7 @@ const Classes = () => {
 
                         <button
                           onClick={() => assignTeacher(cls._id)}
-                          className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 rounded-xl flex items-center gap-2"
+                          className="bg-gray-600 hover:bg-gray-700 text-white px-5 rounded-xl flex items-center gap-2"
                         >
 
                           <UserPlus size={18} />
@@ -654,7 +654,7 @@ const Classes = () => {
 
                       </div>
 
-                      <span className="px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 text-sm font-semibold">
+                      <span className="px-3 py-1 rounded-full bg-gray-100 text-gray-700 text-sm font-semibold">
                         {cls.students.length} Students
                       </span>
 
@@ -763,14 +763,14 @@ const Classes = () => {
 
                           <div
                             key={student._id}
-                            className="flex items-center justify-between rounded-2xl border border-gray-200 bg-white hover:border-indigo-300 hover:shadow-sm transition-all p-4"
+                            className="flex items-center justify-between rounded-2xl border border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm transition-all p-4"
                           >
 
                             <div className="flex items-center gap-4">
 
                               {/* Avatar */}
 
-                              <div className="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center font-bold text-indigo-700 text-lg">
+                              <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-700 text-lg">
 
                                 {student.name?.charAt(0).toUpperCase()}
 

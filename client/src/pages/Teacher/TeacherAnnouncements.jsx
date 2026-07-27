@@ -1,34 +1,51 @@
 import { useEffect, useState } from "react";
 import axios from "../../services/api";
 
+import {
+  Search,
+  Bell,
+  Globe,
+  BookOpen,
+  Pin,
+  Plus,
+} from "lucide-react";
+
 const TeacherAnnouncement = () => {
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
-  const [type, setType] = useState("global");
   const [classId, setClassId] = useState("");
 
   const [classes, setClasses] = useState([]);
   const [announcements, setAnnouncements] = useState([]);
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [success, setSuccess] = useState("");
+  const [msg, setMsg] = useState("");
 
-  useEffect(() => {
-    fetchClasses();
-    fetchAnnouncements();
-  }, []);
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
-const fetchClasses = async () => {
-  try {
-    const res = await axios.get("/class/my-classes");
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState("all");
+  const [expanded, setExpanded] = useState({});
 
-    setClasses(res.data?.data || []);
-  } catch (err) {
-    console.log(err);
-    setClasses([]);
-  }
-};
+  // =========================
+  // FETCH MY CLASSES
+  // =========================
+
+  const fetchClasses = async () => {
+    try {
+      const res = await axios.get("/class/my-classes");
+
+      setClasses(res.data?.data || []);
+    } catch (err) {
+      console.error(err);
+      setClasses([]);
+    }
+  };
+
+  // =========================
+  // FETCH ANNOUNCEMENTS
+  // =========================
 
   const fetchAnnouncements = async () => {
     try {
@@ -36,46 +53,53 @@ const fetchClasses = async () => {
 
       const res = await axios.get("/announcement");
 
-      const data = Array.isArray(res.data?.data)
-        ? res.data.data
-        : Array.isArray(res.data)
-        ? res.data
-        : [];
+      const list =
+        res.data?.data ||
+        res.data?.announcements ||
+        (Array.isArray(res.data) ? res.data : []);
 
-      setAnnouncements(data);
+      setAnnouncements(list);
     } catch (err) {
-      console.log(err);
+      console.error(err);
       setAnnouncements([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleSubmit = async (e) => {
+  useEffect(() => {
+    fetchClasses();
+    fetchAnnouncements();
+  }, []);
+
+  // =========================
+  // CREATE ANNOUNCEMENT
+  // =========================
+
+  const handleCreate = async (e) => {
     e.preventDefault();
 
     try {
       setSaving(true);
-      setSuccess("");
+      setMsg("");
 
       await axios.post("/announcement", {
         title,
         message,
-        type,
-        classId: type === "class" ? classId : null,
+        classId: classId || null,
       });
 
-      setSuccess("Announcement created successfully.");
+      setMsg("Announcement created successfully.");
 
       setTitle("");
       setMessage("");
-      setType("global");
       setClassId("");
 
       fetchAnnouncements();
     } catch (err) {
-      console.log(err);
-      setSuccess(
+      console.error(err);
+
+      setMsg(
         err.response?.data?.message ||
           "Failed to create announcement."
       );
@@ -84,109 +108,327 @@ const fetchClasses = async () => {
     }
   };
 
+  // =========================
+  // HELPERS
+  // =========================
+
+  const getTimeAgo = (date) => {
+    const seconds = Math.floor(
+      (new Date() - new Date(date)) / 1000
+    );
+
+    const intervals = [
+      { label: "year", value: 31536000 },
+      { label: "month", value: 2592000 },
+      { label: "day", value: 86400 },
+      { label: "hour", value: 3600 },
+      { label: "minute", value: 60 },
+    ];
+
+    for (const interval of intervals) {
+      const count = Math.floor(seconds / interval.value);
+
+      if (count >= 1) {
+        return `${count} ${interval.label}${
+          count > 1 ? "s" : ""
+        } ago`;
+      }
+    }
+
+    return "Just now";
+  };
+
+  const avatarColors = [
+    "bg-gray-100 text-gray-700",
+    "bg-blue-100 text-blue-700",
+    "bg-green-100 text-green-700",
+    "bg-pink-100 text-pink-700",
+    "bg-orange-100 text-orange-700",
+    "bg-purple-100 text-purple-700",
+  ];
+
+  const getAvatarColor = (name = "") =>
+    avatarColors[name.length % avatarColors.length];
+
+  const isNew = (date) =>
+    Date.now() - new Date(date) <
+    24 * 60 * 60 * 1000;
+
+  const filteredAnnouncements = announcements.filter(
+    (a) => {
+      const matchSearch =
+        a.title
+          .toLowerCase()
+          .includes(search.toLowerCase()) ||
+        a.message
+          .toLowerCase()
+          .includes(search.toLowerCase());
+
+      const matchFilter =
+        filter === "all"
+          ? true
+          : a.type === filter;
+
+      return matchSearch && matchFilter;
+    }
+  );
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-7xl mx-auto">
+                {/* ================= HEADER ================= */}
 
-      {/* HEADER */}
-      <div className="bg-linear-to-r from-indigo-600 to-purple-600 text-white rounded-2xl p-6 mb-6">
-        <h1 className="text-2xl font-bold">
-          Teacher Announcements
-        </h1>
-        <p className="text-white/80">
-          Create and manage announcements for students.
-        </p>
-      </div>
+        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
 
-      {/* FORM */}
-      <div className="bg-white rounded-2xl shadow-sm border p-6 mb-8">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
 
-        <h2 className="text-lg font-semibold mb-5">
-          Create Announcement
-        </h2>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">
+                Teacher Announcements
+              </h1>
 
-        {success && (
-          <div className="mb-4 rounded-lg bg-blue-50 border border-blue-200 p-3 text-blue-700">
-            {success}
+              <p className="mt-2 text-gray-500">
+                Create and manage announcements for your students.
+              </p>
+            </div>
+
+            <button
+              onClick={() => setShowCreateModal(true)}
+              className="flex items-center justify-center gap-2 bg-gray-600 hover:bg-gray-700 text-white px-5 py-3 rounded-xl transition shadow-sm w-full lg:w-auto"
+            >
+              <Plus size={18} />
+              Create Announcement
+            </button>
+
           </div>
-        )}
 
-        <form
-          onSubmit={handleSubmit}
-          className="space-y-5"
-        >
-          <div>
-            <label className="block mb-2 font-medium">
-              Title
-            </label>
+          {/* SEARCH */}
+
+          <div className="relative mt-6">
+
+            <Search
+              size={18}
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+            />
 
             <input
               type="text"
-              required
-              value={title}
-              onChange={(e) =>
-                setTitle(e.target.value)
-              }
-              className="w-full border rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-400"
-              placeholder="Announcement title"
+              placeholder="Search announcements..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full rounded-xl border border-gray-300 bg-gray-50 py-3 pl-11 pr-4 outline-none focus:border-gray-500 focus:ring-2 focus:ring-gray-200"
             />
+
           </div>
 
-          <div>
-            <label className="block mb-2 font-medium">
-              Message
-            </label>
+          {/* FILTER */}
 
-            <textarea
-              rows={5}
-              required
-              value={message}
-              onChange={(e) =>
-                setMessage(e.target.value)
-              }
-              className="w-full border rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-400"
-              placeholder="Write announcement..."
-            />
+          <div className="flex flex-wrap gap-3 mt-5">
+
+            <button
+              onClick={() => setFilter("all")}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition ${
+                filter === "all"
+                  ? "bg-gray-600 text-white"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              All
+            </button>
+
+            <button
+              onClick={() => setFilter("global")}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition ${
+                filter === "global"
+                  ? "bg-blue-600 text-white"
+                  : "bg-blue-50 text-blue-700 hover:bg-blue-100"
+              }`}
+            >
+              Global
+            </button>
+
+            <button
+              onClick={() => setFilter("class")}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition ${
+                filter === "class"
+                  ? "bg-green-600 text-white"
+                  : "bg-green-50 text-green-700 hover:bg-green-100"
+              }`}
+            >
+              Class
+            </button>
+
           </div>
 
-          <div className="grid md:grid-cols-2 gap-5">
+        </div>
 
-            <div>
-              <label className="block mb-2 font-medium">
-                Type
-              </label>
+        {/* ================= STATS ================= */}
 
-              <select
-                value={type}
-                onChange={(e) =>
-                  setType(e.target.value)
-                }
-                className="w-full border rounded-xl px-4 py-3"
-              >
-                <option value="global">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-5">
+
+          <div className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
+
+            <div className="flex items-center justify-between">
+
+              <div>
+                <p className="text-sm text-gray-500">
                   Global
-                </option>
-                <option value="class">
-                  Class
-                </option>
-              </select>
+                </p>
+
+                <h2 className="text-2xl font-bold mt-2">
+                  {
+                    announcements.filter(
+                      (a) => a.type === "global"
+                    ).length
+                  }
+                </h2>
+              </div>
+
+              <div className="h-11 w-11 rounded-xl bg-blue-100 flex items-center justify-center">
+                <Globe
+                  className="text-blue-600"
+                  size={22}
+                />
+              </div>
+
             </div>
 
-            {type === "class" && (
+          </div>
+
+          <div className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
+
+            <div className="flex items-center justify-between">
+
               <div>
-                <label className="block mb-2 font-medium">
-                  Select Class
-                </label>
+                <p className="text-sm text-gray-500">
+                  Class
+                </p>
+
+                <h2 className="text-2xl font-bold mt-2">
+                  {
+                    announcements.filter(
+                      (a) => a.type === "class"
+                    ).length
+                  }
+                </h2>
+              </div>
+
+              <div className="h-11 w-11 rounded-xl bg-green-100 flex items-center justify-center">
+                <BookOpen
+                  className="text-green-600"
+                  size={22}
+                />
+              </div>
+
+            </div>
+
+          </div>
+
+          <div className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
+
+            <div className="flex items-center justify-between">
+
+              <div>
+                <p className="text-sm text-gray-500">
+                  Recent (24h)
+                </p>
+
+                <h2 className="text-2xl font-bold mt-2">
+                  {
+                    announcements.filter((a) =>
+                      isNew(a.createdAt)
+                    ).length
+                  }
+                </h2>
+              </div>
+
+              <div className="h-11 w-11 rounded-xl bg-red-100 flex items-center justify-center">
+                <Bell
+                  className="text-red-600"
+                  size={22}
+                />
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        {/* ================= MESSAGE ================= */}
+
+        {msg && (
+
+          <div className="mt-5 rounded-xl border border-green-200 bg-green-50 px-5 py-3 text-green-700">
+
+            {msg}
+
+          </div>
+
+        )}
+
+        {/* ================= CREATE MODAL ================= */}
+
+        {showCreateModal && (
+
+          <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-5">
+
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl">
+
+              <div className="flex items-center justify-between border-b p-6">
+
+                <h2 className="text-2xl font-bold">
+                  Create Announcement
+                </h2>
+
+                <button
+                  onClick={() => setShowCreateModal(false)}
+                  className="text-gray-500 hover:text-black text-2xl"
+                >
+                  ×
+                </button>
+
+              </div>
+
+              <form
+                onSubmit={async (e) => {
+                  await handleCreate(e);
+                  setShowCreateModal(false);
+                }}
+                className="p-6 space-y-5"
+              >
+
+                <input
+                  type="text"
+                  required
+                  placeholder="Announcement Title"
+                  value={title}
+                  onChange={(e) =>
+                    setTitle(e.target.value)
+                  }
+                  className="w-full rounded-xl border border-gray-300 p-3"
+                />
+
+                <textarea
+                  rows={6}
+                  required
+                  placeholder="Write announcement..."
+                  value={message}
+                  onChange={(e) =>
+                    setMessage(e.target.value)
+                  }
+                  className="w-full rounded-xl border border-gray-300 p-3 resize-none"
+                />
 
                 <select
-                  required
                   value={classId}
                   onChange={(e) =>
                     setClassId(e.target.value)
                   }
-                  className="w-full border rounded-xl px-4 py-3"
+                  className="w-full rounded-xl border border-gray-300 p-3"
                 >
                   <option value="">
-                    Select Class
+                    Global Announcement
                   </option>
 
                   {classes.map((cls) => (
@@ -200,106 +442,276 @@ const fetchClasses = async () => {
                         : ""}
                     </option>
                   ))}
+
                 </select>
-              </div>
-            )}
 
-          </div>
+                <div className="flex justify-end gap-3">
 
-          <div className="flex justify-end">
-            <button
-              disabled={saving}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl transition"
-            >
-              {saving
-                ? "Publishing..."
-                : "Publish Announcement"}
-            </button>
-          </div>
-        </form>
-      </div>
-
-      {/* ANNOUNCEMENTS */}
-
-      <div className="bg-white rounded-2xl shadow-sm border p-6">
-
-        <h2 className="text-xl font-semibold mb-5">
-          All Announcements
-        </h2>
-
-        {loading ? (
-          <p className="text-gray-500">
-            Loading announcements...
-          </p>
-        ) : announcements.length === 0 ? (
-          <div className="text-center text-gray-500 py-8">
-            No announcements available.
-          </div>
-        ) : (
-          <div className="space-y-5">
-
-            {announcements.map((a) => (
-              <div
-                key={a._id}
-                className="border rounded-2xl p-5 hover:shadow-md transition"
-              >
-                <div className="flex justify-between items-start">
-
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-800">
-                      {a.title}
-                    </h3>
-
-                    <p className="mt-3 text-gray-600">
-                      {a.message}
-                    </p>
-                  </div>
-
-                  <span
-                    className={`text-xs px-3 py-1 rounded-full font-medium ${
-                      a.type === "global"
-                        ? "bg-blue-100 text-blue-700"
-                        : "bg-green-100 text-green-700"
-                    }`}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setShowCreateModal(false)
+                    }
+                    className="px-5 py-3 rounded-xl border"
                   >
-                    {a.type === "global"
-                      ? "Global"
-                      : "Class"}
-                  </span>
+                    Cancel
+                  </button>
+
+                  <button
+                    type="submit"
+                    disabled={saving}
+                    className="px-5 py-3 rounded-xl bg-gray-600 hover:bg-gray-700 text-white"
+                  >
+                    {saving
+                      ? "Creating..."
+                      : "Create Announcement"}
+                  </button>
 
                 </div>
 
-                {a.classId && (
-                  <div className="mt-3 text-sm text-indigo-600">
-                    Class: {a.classId?.name}
-                    {a.classId?.section
-                      ? ` - ${a.classId.section}`
-                      : ""}
-                  </div>
-                )}
+              </form>
 
-                <div className="mt-4 flex justify-between text-xs text-gray-400">
-                  <span>
-                    By{" "}
-                    {a.createdBy?.name ||
-                      "Teacher"}
-                  </span>
-
-                  <span>
-                    {new Date(
-                      a.createdAt
-                    ).toLocaleString()}
-                  </span>
-                </div>
-              </div>
-            ))}
+            </div>
 
           </div>
+
         )}
+        
+        
+      </div>
+        {/* ================= ANNOUNCEMENTS ================= */}
+
+        <div className="mt-8">
+
+          {loading ? (
+
+            <div className="space-y-4">
+
+              {[1, 2, 3].map((i) => (
+
+                <div
+                  key={i}
+                  className="bg-white border border-gray-200 rounded-2xl p-6 animate-pulse"
+                >
+
+                  <div className="flex gap-4">
+
+                    <div className="w-12 h-12 rounded-full bg-gray-200"></div>
+
+                    <div className="flex-1">
+                      <div className="h-4 w-40 bg-gray-200 rounded"></div>
+                      <div className="h-3 w-24 bg-gray-100 rounded mt-3"></div>
+                    </div>
+
+                  </div>
+
+                  <div className="h-5 w-64 bg-gray-200 rounded mt-6"></div>
+
+                  <div className="h-3 bg-gray-100 rounded mt-5"></div>
+                  <div className="h-3 bg-gray-100 rounded mt-3"></div>
+                  <div className="h-3 w-3/4 bg-gray-100 rounded mt-3"></div>
+
+                </div>
+
+              ))}
+
+            </div>
+
+          ) : filteredAnnouncements.length === 0 ? (
+
+            <div className="bg-white rounded-2xl border border-gray-200 p-16 text-center">
+
+              <Bell
+                size={60}
+                className="mx-auto text-gray-300"
+              />
+
+              <h2 className="mt-5 text-2xl font-semibold text-gray-800">
+                No Announcements Found
+              </h2>
+
+              <p className="mt-2 text-gray-500">
+                There are no announcements available.
+              </p>
+
+            </div>
+
+          ) : (
+
+            <div className="space-y-6">
+
+              {filteredAnnouncements.map((a) => (
+
+                <div
+                  key={a._id}
+                  className="bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+                >
+
+                  <div className="p-6">
+
+                    {/* HEADER */}
+
+                    <div className="flex items-start gap-4">
+
+                      <div
+                        className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg ${getAvatarColor(
+                          a.createdBy?.name
+                        )}`}
+                      >
+                        {a.createdBy?.name?.charAt(0).toUpperCase() || "T"}
+                      </div>
+
+                      <div className="flex-1">
+
+                        <div className="flex flex-wrap items-center gap-2">
+
+                          <h3 className="font-semibold text-gray-900">
+                            {a.createdBy?.name || "Teacher"}
+                          </h3>
+
+                          <span className="text-xs text-gray-500 capitalize">
+                            • {a.createdBy?.role}
+                          </span>
+
+                          {isNew(a.createdAt) && (
+                            <span className="bg-red-100 text-red-600 text-[10px] px-2 py-1 rounded-full font-semibold">
+                              NEW
+                            </span>
+                          )}
+
+                        </div>
+
+                        <p className="text-xs text-gray-400 mt-1">
+                          {getTimeAgo(a.createdAt)}
+                        </p>
+
+                      </div>
+
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                          a.type === "global"
+                            ? "bg-blue-100 text-blue-700"
+                            : "bg-green-100 text-green-700"
+                        }`}
+                      >
+                        {a.type}
+                      </span>
+
+                    </div>
+
+                    {/* BODY */}
+
+                    <div className="mt-5">
+
+                      <h2 className="text-xl font-semibold text-gray-900">
+                        {a.title}
+                      </h2>
+
+                      <p
+                        className={`mt-3 text-gray-600 leading-8 ${
+                          expanded[a._id]
+                            ? ""
+                            : "line-clamp-3"
+                        }`}
+                      >
+                        {a.message}
+                      </p>
+
+                      {a.message.length > 180 && (
+
+                        <button
+                          onClick={() =>
+                            setExpanded((prev) => ({
+                              ...prev,
+                              [a._id]:
+                                !prev[a._id],
+                            }))
+                          }
+                          className="mt-3 text-gray-600 font-medium hover:underline"
+                        >
+                          {expanded[a._id]
+                            ? "Show Less"
+                            : "Read More"}
+                        </button>
+
+                      )}
+
+                    </div>
+
+                    {/* FOOTER */}
+
+                    <div className="mt-6 pt-4 border-t border-gray-100 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+
+                      <div className="flex flex-wrap gap-3">
+
+                        {a.classId ? (
+
+                          <div className="flex items-center gap-2 bg-green-50 text-green-700 px-3 py-2 rounded-full text-sm">
+
+                            <BookOpen size={15} />
+
+                            <span>
+                              {a.classId.name}
+                              {a.classId.section
+                                ? ` - ${a.classId.section}`
+                                : ""}
+                            </span>
+
+                          </div>
+
+                        ) : (
+
+                          <div className="flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-2 rounded-full text-sm">
+
+                            <Globe size={15} />
+
+                            <span>
+                              Visible to everyone
+                            </span>
+
+                          </div>
+
+                        )}
+
+                      </div>
+
+                      <div className="flex items-center gap-5 text-sm text-gray-400">
+
+                        <div className="flex items-center gap-2">
+                          📅
+                          <span>
+                            {new Date(
+                              a.createdAt
+                            ).toLocaleDateString()}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <Pin size={15} />
+                          <span>Notice</span>
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+              ))}
+
+            </div>
+
+          )}
+
+        </div>
 
       </div>
-    </div>
+
   );
 };
 
 export default TeacherAnnouncement;
+      
+      

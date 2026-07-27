@@ -67,7 +67,7 @@ const AdminDashboard = () => {
     return (
       <div className="flex justify-center items-center h-[80vh]">
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <div className="w-12 h-12 border-4 border-gray-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
 
           <p className="mt-5 text-gray-500 font-medium">
             Loading Dashboard...
@@ -82,8 +82,8 @@ const AdminDashboard = () => {
       title: "Students",
       value: stats?.students || 0,
       icon: Users,
-      color: "bg-indigo-100",
-      text: "text-indigo-600",
+      color: "bg-gray-100",
+      text: "text-gray-600",
     },
     {
       title: "Teachers",
@@ -200,7 +200,7 @@ const AdminDashboard = () => {
 
         <div className="w-full xl:w-auto bg-white rounded-2xl border border-gray-200 shadow-sm p-5 flex items-center gap-4">
 
-          <div className="w-14 h-14 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold text-xl">
+          <div className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center text-gray-700 font-bold text-xl">
             A
           </div>
 
@@ -311,7 +311,7 @@ const AdminDashboard = () => {
 
             </div>
 
-            <div className="px-4 py-2 rounded-xl bg-indigo-50 text-indigo-600 text-sm font-semibold">
+            <div className="px-4 py-2 rounded-xl bg-gray-50 text-gray-600 text-sm font-semibold">
               Overview
             </div>
 
@@ -321,13 +321,13 @@ const AdminDashboard = () => {
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
 
-            <div className="rounded-xl bg-indigo-50 p-4">
+            <div className="rounded-xl bg-gray-50 p-4">
 
               <p className="text-xs text-gray-500">
                 Students
               </p>
 
-              <h3 className="text-2xl font-bold text-indigo-700 mt-1">
+              <h3 className="text-2xl font-bold text-gray-700 mt-1">
                 {stats?.students || 0}
               </h3>
 
@@ -491,7 +491,7 @@ const AdminDashboard = () => {
 
               {/* Present */}
 
-              <div className="rounded-2xl bg-indigo-50 p-3">
+              <div className="rounded-2xl bg-gray-50 p-3">
 
                 <div className="flex justify-between items-center">
 
@@ -501,7 +501,7 @@ const AdminDashboard = () => {
                       Present Students
                     </p>
 
-                    <h3 className="text-3xl font-bold text-indigo-700 mt-2">
+                    <h3 className="text-3xl font-bold text-gray-700 mt-2">
                       {presentPercentage}%
                     </h3>
 
@@ -511,7 +511,7 @@ const AdminDashboard = () => {
 
                   </div>
 
-                  <div className="w-14 h-14 rounded-2xl bg-indigo-100 flex items-center justify-center text-2xl">
+                  <div className="w-14 h-14 rounded-2xl bg-gray-100 flex items-center justify-center text-2xl">
                     ✅
                   </div>
 
@@ -559,7 +559,7 @@ const AdminDashboard = () => {
                     Overall Attendance
                   </span>
 
-                  <span className="font-semibold text-indigo-700">
+                  <span className="font-semibold text-gray-700">
                     {presentPercentage}%
                   </span>
 
@@ -568,7 +568,7 @@ const AdminDashboard = () => {
                 <div className="h-3 rounded-full bg-gray-100 overflow-hidden">
 
                   <div
-                    className="h-full rounded-full bg-indigo-600 transition-all duration-500"
+                    className="h-full rounded-full bg-gray-600 transition-all duration-500"
                     style={{
                       width: `${presentPercentage}%`,
                     }}
@@ -619,15 +619,15 @@ const AdminDashboard = () => {
 
             <a
               href="/admin/student"
-              className="flex items-center justify-between rounded-xl border border-gray-200 hover:border-indigo-300 hover:bg-indigo-50 p-4 transition"
+              className="flex items-center justify-between rounded-xl border border-gray-200 hover:border-gray-300 hover:bg-gray-50 p-4 transition"
             >
 
               <div className="flex items-center gap-3">
 
-                <div className="w-11 h-11 rounded-xl bg-indigo-100 flex items-center justify-center">
+                <div className="w-11 h-11 rounded-xl bg-gray-100 flex items-center justify-center">
                   <Users
                     size={20}
-                    className="text-indigo-600"
+                    className="text-gray-600"
                   />
                 </div>
 
@@ -733,7 +733,7 @@ const AdminDashboard = () => {
 
             <a
               href="/admin/announcement"
-              className="text-sm font-medium text-indigo-600 hover:text-indigo-700"
+              className="text-sm font-medium text-gray-600 hover:text-gray-700"
             >
               View All
             </a>
@@ -745,7 +745,7 @@ const AdminDashboard = () => {
 
               <div
                 key={item._id}
-                className="group rounded-2xl border border-gray-200 bg-white hover:border-indigo-300 hover:shadow-md transition-all duration-300 overflow-hidden"
+                className="group rounded-2xl border border-gray-200 bg-white hover:border-gray-300 hover:shadow-md transition-all duration-300 overflow-hidden"
               >
 
 
@@ -757,11 +757,11 @@ const AdminDashboard = () => {
 
                     <div className="flex items-center gap-3">
 
-                      <div className="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center">
+                      <div className="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center">
 
                         <Megaphone
                           size={22}
-                          className="text-indigo-600"
+                          className="text-gray-600"
                         />
 
                       </div>
@@ -780,7 +780,7 @@ const AdminDashboard = () => {
 
                     </div>
 
-                    <span className="px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 text-xs font-semibold">
+                    <span className="px-3 py-1 rounded-full bg-gray-100 text-gray-700 text-xs font-semibold">
                       Notice
                     </span>
 

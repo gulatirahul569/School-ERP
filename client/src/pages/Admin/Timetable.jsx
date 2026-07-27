@@ -294,7 +294,7 @@ const Timetable = () => {
         <button
           onClick={handleSubmit}
           disabled={saving}
-          className="bg-indigo-600 text-white px-6 py-2 rounded"
+          className="bg-gray-600 text-white px-6 py-2 rounded"
         >
           {saving ? "Saving..." : "Save Timetable"}
         </button>

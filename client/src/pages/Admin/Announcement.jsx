@@ -150,7 +150,7 @@ const Announcement = () => {
   };
 
   const avatarColors = [
-    "bg-indigo-100 text-indigo-700",
+    "bg-gray-100 text-gray-700",
     "bg-blue-100 text-blue-700",
     "bg-green-100 text-green-700",
     "bg-pink-100 text-pink-700",
@@ -207,7 +207,7 @@ const Announcement = () => {
 
               <button
                 onClick={() => setShowCreateModal(true)}
-                className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-3 rounded-xl transition shadow-sm"
+                className="flex items-center gap-2 bg-gray-600 hover:bg-gray-700 text-white px-5 py-3 rounded-xl transition shadow-sm"
               >
                 <Plus size={18} />
                 Create Announcement
@@ -231,7 +231,7 @@ const Announcement = () => {
               placeholder="Search announcements..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full rounded-xl border border-gray-300 bg-gray-50 py-3 pl-11 pr-4 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+              className="w-full rounded-xl border border-gray-300 bg-gray-50 py-3 pl-11 pr-4 outline-none focus:border-gray-500 focus:ring-2 focus:ring-gray-200"
             />
 
           </div>
@@ -243,7 +243,7 @@ const Announcement = () => {
             <button
               onClick={() => setFilter("all")}
               className={`px-4 py-2 rounded-full text-sm font-medium transition ${filter === "all"
-                ? "bg-indigo-600 text-white"
+                ? "bg-gray-600 text-white"
                 : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                 }`}
             >
@@ -436,7 +436,7 @@ const Announcement = () => {
                   <button
                     type="submit"
                     disabled={saving}
-                    className="px-5 py-3 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700"
+                    className="px-5 py-3 rounded-xl bg-gray-600 text-white hover:bg-gray-700"
                   >
                     {saving ? "Creating..." : "Create Announcement"}
                   </button>
@@ -602,7 +602,7 @@ const Announcement = () => {
                               [a._id]: !prev[a._id],
                             }))
                           }
-                          className="mt-3 text-indigo-600 font-medium hover:underline"
+                          className="mt-3 text-gray-600 font-medium hover:underline"
                         >
                           {expanded[a._id]
                             ? "Show Less"

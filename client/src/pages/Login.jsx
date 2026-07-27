@@ -59,7 +59,7 @@ const Login = () => {
     />
 
     {/* Mobile Overlay */}
-    <div className="absolute inset-0 lg:hidden bg-black/40 backdrop-blur-[2px]" />
+    <div className="absolute inset-0 lg:hidden bg-black/50 backdrop-blur-[1px]" />
 
     {/* Desktop Card */}
     <div
@@ -113,24 +113,22 @@ const Login = () => {
         >
 
           {/* Logo */}
-          <div className="flex items-center gap-3 mb-8">
+          <div className="flex items-center gap-3 mb-6">
             <div className="w-11 h-11 rounded-full bg-sky-500 flex items-center justify-center text-white">
               📚
             </div>
 
-            <p className="font-semibold text-lg lg:text-slate-800 text-white">
+            <p className="font-semibold text-2xl lg:text-slate-800 text-white">
               Management System
             </p>
           </div>
 
           {/* Heading */}
-          <div className="mb-8">
+          <div className="mb-4 text-center">
 
-            <h1 className="text-3xl lg:text-4xl font-bold lg:text-gray-900 text-white">
-              Welcome Back
-            </h1>
+            
 
-            <p className="mt-3 lg:text-gray-500 text-white/80">
+            <p className="mt-2  text-xl lg:text-gray-600 text-white/80">
               Sign in to continue to your account.
             </p>
 
@@ -138,7 +136,7 @@ const Login = () => {
 
           {/* EMAIL */}
 
-          <div className="mb-5">
+          <div className="mb-2">
 
             <label className="block text-sm mb-2 font-medium lg:text-gray-700 text-white">
               Email
@@ -152,7 +150,7 @@ const Login = () => {
               onChange={handleChange}
               className="
               w-full
-              rounded-xl
+              rounded-lg
               border
 
               lg:border-gray-300
@@ -167,7 +165,7 @@ const Login = () => {
               placeholder:text-white/70
               lg:placeholder:text-gray-400
 
-              px-5
+              px-4
               py-4
 
               outline-none
@@ -196,11 +194,11 @@ const Login = () => {
               onChange={handleChange}
               className="
               w-full
-              rounded-xl
+              rounded-lg
               border
 
               lg:border-gray-300
-              border-white/30
+              border-white/20
 
               lg:bg-white
               bg-white/15
@@ -211,7 +209,7 @@ const Login = () => {
               placeholder:text-white/70
               lg:placeholder:text-gray-400
 
-              px-5
+              px-4
               py-4
 
               outline-none
@@ -235,10 +233,11 @@ const Login = () => {
             rounded-xl
             font-semibold
 
-            bg-sky-600
+            bg-white
+            lg:bg-sky-500
             hover:bg-sky-700
 
-            text-white
+            text-black
 
             transition
             disabled:opacity-50

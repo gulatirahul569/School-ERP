@@ -240,14 +240,14 @@ const TeacherFees = () => {
             <table className="w-full table-fixed">
               <thead className="bg-gray-100">
                 <tr>
-                  <th className="p-2 text-left">Student</th>
-                  <th className="p-2 text-left">Phone</th>
-                  <th className="p-2 text-left">Total Due</th>
-                  <th className="p-2 text-left">Paid</th>
-                  <th className="p-2 text-left">Balance</th>
-                  <th className="p-2 text-left">Status</th>
-                  <th className="p-2 text-left">{CURRENT_MONTH_NAME} Fee</th>
-                  <th className="p-2 text-left">Action</th>
+                  <th className="p-2 text-center">Student</th>
+                  <th className="p-2 text-center">Phone</th>
+                  <th className="p-2 text-center">Total Due</th>
+                  <th className="p-2 text-center">Paid</th>
+                  <th className="p-2 text-center">Balance</th>
+                  <th className="p-2 text-center">Status</th>
+                  <th className="p-2 text-center">{CURRENT_MONTH_NAME} Fee</th>
+                  <th className="p-2 text-center">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -259,12 +259,12 @@ const TeacherFees = () => {
 
                   return (
                     <tr key={student._id} className="border-t">
-                      <td className="p-2 font-medium truncate">{student.name}</td>
-                      <td className="p-2 text-gray-500 truncate">{student.phone || "—"}</td>
-                      <td className="p-2">₹{totalDue}</td>
-                      <td className="p-2 text-green-600">₹{totalPaid}</td>
-                      <td className="p-2 font-semibold">₹{balance}</td>
-                      <td className="p-2">
+                      <td className="p-2 text-center font-medium truncate">{student.name}</td>
+                      <td className="p-2 text-center text-gray-500 truncate">{student.phone || "—"}</td>
+                      <td className="p-2 text-center">₹{totalDue}</td>
+                      <td className="p-2 text-center text-green-600">₹{totalPaid}</td>
+                      <td className="p-2 text-center font-semibold">₹{balance}</td>
+                      <td className="p-2v text-center">
                         <span
                           className={`px-2 py-1 text-xs rounded ${
                             balance === 0
@@ -275,7 +275,7 @@ const TeacherFees = () => {
                           {balance === 0 ? "Clear" : "Due"}
                         </span>
                       </td>
-                      <td className="p-2">
+                      <td className="p-2 text-center">
                         <span className={`px-2 py-1 text-xs rounded ${badge.cls}`}>
                           {badge.label}
                         </span>

@@ -231,7 +231,7 @@ const TeacherDashboard = () => {
 
           {/* Profile Card */}
           <div className="flex items-center gap-4 bg-gray-100 border border-gray-200 rounded-3xl px-5 py-3">
-            <div className="w-14 h-14 rounded-full bg-indigo-100 flex items-center justify-center text-xl font-bold text-indigo-700">
+            <div className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center text-xl font-bold text-gray-700">
               {teacher?.name?.charAt(0).toUpperCase() || "T"}
             </div>
 
@@ -264,7 +264,7 @@ const TeacherDashboard = () => {
               <p className="mt-1 text-xs text-gray-400">Assigned classes</p>
             </div>
 
-            <div className="h-12 w-12 rounded-xl bg-indigo-50 flex items-center justify-center">
+            <div className="h-12 w-12 rounded-xl bg-gray-50 flex items-center justify-center">
               🏫
             </div>
           </div>
@@ -372,7 +372,7 @@ const TeacherDashboard = () => {
                   className={`inline-flex items-center mt-5 rounded-full px-3 py-1 text-sm font-medium ${
                     currentClass
                       ? "bg-green-100 text-green-700"
-                      : "bg-indigo-100 text-indigo-700"
+                      : "bg-gray-100 text-gray-700"
                   }`}
                 >
                   {currentClass && "🟢 "}
@@ -392,7 +392,7 @@ const TeacherDashboard = () => {
             )}
           </div>
 
-          <div className="hidden sm:flex h-14 w-14 rounded-xl bg-indigo-50 items-center justify-center text-2xl">
+          <div className="hidden sm:flex h-14 w-14 rounded-xl bg-gray-50 items-center justify-center text-2xl">
             👨‍🏫
           </div>
         </div>
@@ -417,7 +417,7 @@ const TeacherDashboard = () => {
 
             <Link
               to="/teacher/timetable"
-              className="text-sm font-medium text-indigo-600 hover:text-indigo-700 transition"
+              className="text-sm font-medium text-gray-600 hover:text-gray-700 transition"
             >
               View All →
             </Link>
@@ -471,7 +471,7 @@ const TeacherDashboard = () => {
                         {/* Period */}
 
                         <td className="px-6 py-3">
-                          <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-50 text-indigo-700 font-semibold">
+                          <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-gray-50 text-gray-700 font-semibold">
                             {period.periodNo}
                           </span>
                         </td>
@@ -547,7 +547,7 @@ const TeacherDashboard = () => {
 
               <Link
                 to="/teacher/announcements"
-                className="text-sm font-medium text-indigo-600 hover:text-indigo-700"
+                className="text-sm font-medium text-gray-600 hover:text-gray-700"
               >
                 View All →
               </Link>
@@ -565,12 +565,12 @@ const TeacherDashboard = () => {
                   {announcements.slice(0, 2).map((a) => (
                     <div
                       key={a._id}
-                      className="border border-gray-200 rounded-2xl p-4 hover:border-indigo-300 transition"
+                      className="border border-gray-200 rounded-2xl p-4 hover:border-gray-300 transition"
                     >
                       {/* Header */}
 
                       <div className="flex items-center gap-3">
-                        <div className="w-11 h-11 rounded-full bg-indigo-100 flex items-center justify-center font-semibold text-indigo-700">
+                        <div className="w-11 h-11 rounded-full bg-gray-100 flex items-center justify-center font-semibold text-gray-700">
                           {a.createdBy?.name?.charAt(0).toUpperCase() || "A"}
                         </div>
 
