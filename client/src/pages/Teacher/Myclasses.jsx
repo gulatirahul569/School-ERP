@@ -48,7 +48,7 @@ const MyClasses = () => {
 
         <div className="mt-4 md:mt-0 bg-white shadow rounded-xl px-6 py-3">
           <p className="text-sm text-gray-500">Assigned Classes</p>
-          <p className="text-3xl font-bold text-indigo-600">
+          <p className="text-3xl font-bold text-gary-500">
             {classes.length}
           </p>
         </div>
@@ -76,7 +76,7 @@ const MyClasses = () => {
             >
 
               {/* Header */}
-              <div className="bg-linear-to-r from-indigo-600 to-blue-500 text-white p-6">
+              <div className="bg-linear-to-r from-black to-gray-600 text-white p-6">
 
                 <div className="flex justify-between">
                   <div>
@@ -99,10 +99,10 @@ const MyClasses = () => {
 
                 <div className="grid grid-cols-2 gap-4">
 
-                  <div className="bg-indigo-50 rounded-2xl p-4 text-center">
+                  <div className="bg-gray-50 rounded-2xl p-4 text-center">
                     <p className="text-gray-500 text-sm">Students</p>
 
-                    <h3 className="text-3xl font-bold text-indigo-600">
+                    <h3 className="text-3xl font-bold text-gray-600">
                       {cls.students?.length || 0}
                     </h3>
                   </div>
@@ -119,7 +119,7 @@ const MyClasses = () => {
                 <div className="mt-6">
                   <Link
                     to={`/teacher/classes/${cls._id}`}
-                    className="block w-full bg-indigo-600 hover:bg-indigo-700 transition text-white text-center py-3 rounded-xl font-semibold"
+                    className="block w-full bg-gray-600 hover:bg-gray-700 transition text-white text-center py-3 rounded-xl font-semibold"
                   >
                     View Class
                   </Link>

@@ -255,6 +255,8 @@ router.get("/profile", protect, async (req, res) => {
   }
 });
 
+
+
 // =======================
 // 🔥 NEW: UNIVERSAL USERS API (NO FRONTEND CHANGE)
 // =======================
@@ -274,5 +276,39 @@ router.get("/users", protect, authorizeRoles("admin"), async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+
+// =======================
+// VIEW SINGLE USER DETAILS
+// ADMIN + TEACHER
+// =======================
+router.get(
+  "/:id",
+  protect,
+  authorizeRoles("admin", "teacher"),
+  async (req, res) => {
+    try {
+      const student = await User.findById(req.params.id)
+        .select("-password");
+
+      if (!student) {
+        return res.status(404).json({
+          success: false,
+          message: "Student not found",
+        });
+      }
+
+      res.json({
+        success: true,
+        data: student,
+      });
+
+    } catch (err) {
+      res.status(500).json({
+        success: false,
+        message: err.message,
+      });
+    }
+  }
+);
 
 module.exports = router;
