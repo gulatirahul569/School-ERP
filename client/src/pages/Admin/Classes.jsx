@@ -8,6 +8,7 @@ import {
   Trash2,
   UserPlus,
   PlusCircle,
+  ListOrdered,
 } from "lucide-react";
 
 const Classes = () => {
@@ -150,6 +151,15 @@ const Classes = () => {
       fetchClasses();
     } catch (err) {
       console.log(err);
+    }
+  };
+
+  const assignRollNumbers = async (classId) => {
+    try {
+      await API.post("/class/assign-roll-numbers", { classId });
+      fetchClasses();
+    } catch (err) {
+      alert(err.response?.data?.message || "Failed to assign roll numbers");
     }
   };
 
@@ -386,49 +396,49 @@ const Classes = () => {
           </form>
 
         </div>
-                    {/* ================= SEARCH ================= */}
+        {/* ================= SEARCH ================= */}
 
-            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
-              <p className="text-xl font-semibold pl-2 pb-2">
-                Search Classes
-              </p>
+        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
+          <p className="text-xl font-semibold pl-2 pb-2">
+            Search Classes
+          </p>
 
-              <div className="grid md:grid-cols-2 gap-4">
+          <div className="grid md:grid-cols-2 gap-4">
 
-                <input
-                  type="text"
-                  placeholder="Search class or section..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-gray-500 outline-none"
-                />
+            <input
+              type="text"
+              placeholder="Search class or section..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-gray-500 outline-none"
+            />
 
-                <select
-                  value={sectionFilter}
-                  onChange={(e) => setSectionFilter(e.target.value)}
-                  className="border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-gray-500 outline-none"
+            <select
+              value={sectionFilter}
+              onChange={(e) => setSectionFilter(e.target.value)}
+              className="border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-gray-500 outline-none"
+            >
+
+              <option value="all">
+                All Sections
+              </option>
+
+              {[...new Set(classes.map((c) => c.section))].map((section) => (
+
+                <option
+                  key={section}
+                  value={section}
                 >
+                  Section {section}
+                </option>
 
-                  <option value="all">
-                    All Sections
-                  </option>
+              ))}
 
-                  {[...new Set(classes.map((c) => c.section))].map((section) => (
+            </select>
 
-                    <option
-                      key={section}
-                      value={section}
-                    >
-                      Section {section}
-                    </option>
+          </div>
 
-                  ))}
-
-                </select>
-
-              </div>
-
-            </div>
+        </div>
 
         {/* Cards */}
 
@@ -491,9 +501,20 @@ const Classes = () => {
                             Section {cls.section}
                           </span>
 
-                          <span className="px-3 py-1 rounded-full bg-gray-100 text-gray-600 text-xs">
-                            {cls.students.length} Students
-                          </span>
+                          <div className="flex items-center gap-3">
+                            <span className="px-3 py-1 rounded-full bg-gray-100 text-gray-700 text-sm font-semibold">
+                              {cls.students.length} Students
+                            </span>
+                            <button
+                              onClick={() => assignRollNumbers(cls._id)}
+                              disabled={cls.students.length === 0}
+                              title="Sort students A-Z and re-assign roll numbers 1, 2, 3..."
+                              className="px-3 py-1.5 rounded-xl bg-gray-800 hover:bg-gray-900 text-white text-sm font-medium flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                            >
+                              <ListOrdered size={16} />
+                              Assign Roll No. (A-Z)
+                            </button>
+                          </div>
 
                         </div>
 
@@ -767,13 +788,10 @@ const Classes = () => {
                           >
 
                             <div className="flex items-center gap-4">
-
+                             
                               {/* Avatar */}
-
                               <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-700 text-lg">
-
                                 {student.name?.charAt(0).toUpperCase()}
-
                               </div>
 
                               <div>

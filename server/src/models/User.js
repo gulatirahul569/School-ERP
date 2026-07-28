@@ -30,6 +30,10 @@ const userSchema = new mongoose.Schema(
       ref: "Class",
       default: null,
     },
+    rollNumber: {
+      type: Number,
+      default: null,
+    },
 
     // Optional profile fields
     phone: {

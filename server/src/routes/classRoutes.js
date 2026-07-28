@@ -11,6 +11,7 @@ const {
   getMyClasses,
   assignTeacherToClass,
   removeTeacherFromClass,
+  assignRollNumbers,   // ADD THIS
 } = require("../controllers/classController");
 
 const protect = require("../middleware/authMiddleware");
@@ -86,6 +87,13 @@ router.post(
   protect,
   authorizeRoles("admin"),
   removeStudentFromClass
+);
+
+router.post(
+  "/assign-roll-numbers",
+  protect,
+  authorizeRoles("admin"),
+  assignRollNumbers
 );
 
 // =======================

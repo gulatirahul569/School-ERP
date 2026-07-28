@@ -54,9 +54,19 @@ exports.createClass = async (req, res) => {
 exports.getClasses = async (req, res) => {
   try {
     const classes = await Class.find()
-      .populate("students", "name email classId")
+      .populate("students", "name email classId rollNumber")
       .populate("classTeacher", "name email")
       .sort({ createdAt: -1 });
+    classes.forEach((cls) => {
+      cls.students.sort((a, b) => {
+        if (a.rollNumber == null && b.rollNumber == null) {
+          return (a.name || "").localeCompare(b.name || "");
+        }
+        if (a.rollNumber == null) return 1;
+        if (b.rollNumber == null) return -1;
+        return a.rollNumber - b.rollNumber;
+      });
+    });
 
     res.status(200).json({
       success: true,
@@ -76,7 +86,7 @@ exports.getClasses = async (req, res) => {
 exports.getClassById = async (req, res) => {
   try {
     const classData = await Class.findById(req.params.id)
-      .populate("students", "name email role classId")
+      .populate("students", "name email role classId rollNumber")
       .populate("classTeacher", "name email role");
 
     if (!classData) {
@@ -85,6 +95,14 @@ exports.getClassById = async (req, res) => {
         message: "Class not found",
       });
     }
+    classData.students.sort((a, b) => {
+      if (a.rollNumber == null && b.rollNumber == null) {
+        return (a.name || "").localeCompare(b.name || "");
+      }
+      if (a.rollNumber == null) return 1;
+      if (b.rollNumber == null) return -1;
+      return a.rollNumber - b.rollNumber;
+    });
 
     res.status(200).json({
       success: true,
@@ -221,6 +239,74 @@ exports.assignTeacherToClass = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Teacher assigned successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+// =======================
+// ASSIGN ROLL NUMBERS (ALPHABETICAL)
+// =======================
+exports.assignRollNumbers = async (req, res) => {
+  try {
+    const { classId } = req.body;
+
+    if (!classId) {
+      return res.status(400).json({
+        success: false,
+        message: "classId is required",
+      });
+    }
+
+    const classData = await Class.findById(classId).populate(
+      "students",
+      "name email rollNumber",
+    );
+
+    if (!classData) {
+      return res.status(404).json({
+        success: false,
+        message: "Class not found",
+      });
+    }
+
+    if (classData.students.length === 0) {
+      return res.status(200).json({
+        success: true,
+        message: "No students in this class to assign roll numbers to",
+        data: [],
+      });
+    }
+
+    const sortedStudents = [...classData.students].sort((a, b) =>
+      (a.name || "").localeCompare(b.name || "", undefined, {
+        sensitivity: "base",
+      }),
+    );
+
+    const bulkOps = sortedStudents.map((student, index) => ({
+      updateOne: {
+        filter: { _id: student._id },
+        update: { rollNumber: index + 1 },
+      },
+    }));
+
+    await User.bulkWrite(bulkOps);
+
+    const updatedList = sortedStudents.map((student, index) => ({
+      _id: student._id,
+      name: student.name,
+      email: student.email,
+      rollNumber: index + 1,
+    }));
+
+    res.status(200).json({
+      success: true,
+      message: "Roll numbers assigned alphabetically",
+      data: updatedList,
     });
   } catch (error) {
     res.status(500).json({
