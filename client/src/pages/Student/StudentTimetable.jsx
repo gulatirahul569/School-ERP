@@ -69,7 +69,7 @@ const StudentTimetable = () => {
   }
 
   return (
-    <div className="p-4 space-y">
+    <div className=" space-y">
       {/* HEADER */}
       <div className=" text-black pl-6 pr-6 text-center">
         <h1 className="text-2xl font-bold">📅 Weekly Timetable</h1>

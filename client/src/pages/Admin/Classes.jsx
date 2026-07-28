@@ -207,7 +207,7 @@ const Classes = () => {
   });
 
   return (
-    <div className="space-y-6 p-3 sm:p-2 sm:pt-0 animate-fadeIn">
+    <div className="space-y-6  sm:p-2 sm:pt-0 animate-fadeIn">
 
       <div className="space-y-6">
 
@@ -788,11 +788,14 @@ const Classes = () => {
                           >
 
                             <div className="flex items-center gap-4">
-                             
-                              {/* Avatar */}
-                              <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-700 text-lg">
-                                {student.name?.charAt(0).toUpperCase()}
+                              {/* Roll number */}
+                              <div className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center font-bold text-white text-sm shrink-0">
+                                {student.rollNumber ?? "–"}
                               </div>
+                              {/* Avatar */}
+                              {/* <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-700 text-lg">
+                                {student.name?.charAt(0).toUpperCase()}
+                              </div> */}
 
                               <div>
 

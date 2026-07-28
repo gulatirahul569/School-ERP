@@ -222,7 +222,7 @@ const Attendance = () => {
     );
 
     return (
-        <div className="space-y-6 p-3 sm:p-2 sm:pt-0 animate-fadeIn">
+        <div className="space-y-6  sm:p-2 sm:pt-0 animate-fadeIn">
 
             {/* ================= HEADER ================= */}
 

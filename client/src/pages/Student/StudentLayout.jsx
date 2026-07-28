@@ -129,7 +129,7 @@ const StudentLayout = () => {
       </aside>
 
       {/* CONTENT */}
-      <main className="md:ml-64 p-6 min-h-screen bg-[#F4F6FB]">
+      <main className="md:ml-64 p-3  min-h-screen bg-[#F4F6FB]">
         <Outlet />
       </main>
     </div>
