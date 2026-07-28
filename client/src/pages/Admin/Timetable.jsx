@@ -125,7 +125,10 @@ const Timetable = () => {
               return {
                 periodNo: i + 1,
                 subject: existing?.subject || "",
-                teacher: existing?.teacher || "",
+                teacher:
+                  typeof existing?.teacher === "object"
+                    ? existing.teacher?._id
+                    : existing?.teacher || "",
                 startTime: slot.start,
                 endTime: slot.end,
                 isBreak: slot.isBreak || false,

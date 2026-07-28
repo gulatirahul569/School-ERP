@@ -128,7 +128,7 @@ const TeacherTimetable = () => {
                             {period.subject}
                           </p>
 
-                          <p className="text-xs lg:text-sm text-indigo-600 font-medium">
+                          <p className="text-xs lg:text-sm text-gray-600 font-medium">
                             Class {period.classId?.name}
                             {period.classId?.section &&
                               ` - ${period.classId.section}`}

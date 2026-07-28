@@ -571,7 +571,7 @@ const Result = () => {
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search by name or email..."
-                  className="h-12 w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 text-gray-700 outline-none transition focus:border-gray-500 focus:bg-white focus:ring-4 focus:ring-gray-100"
+                  className="h-12 w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 text-gray-700 outline-none transition focus:border-gray-500 focus:bg-white focus:ring-4 focus:ring-gray-100 "
                 />
 
                 <svg
@@ -621,7 +621,7 @@ const Result = () => {
           <span>{classAverage}%</span>
         </div>
 
-        <div className="h-3 overflow-hidden rounded-full bg-gray-100">
+        <div className="h-5 overflow-hidden rounded-full bg-gray-100">
           <div
             className="h-full rounded-full bg-gray-600 transition-all duration-500"
             style={{ width: `${classAverage}%` }}

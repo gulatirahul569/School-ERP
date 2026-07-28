@@ -417,7 +417,7 @@ const TeacherDashboard = () => {
 
             <Link
               to="/teacher/timetable"
-              className="text-sm font-medium text-gray-600 hover:text-gray-700 transition"
+              className="text-sm font-medium text-indigo-600 hover:text-indigo-700 transition"
             >
               View All →
             </Link>
@@ -547,7 +547,7 @@ const TeacherDashboard = () => {
 
               <Link
                 to="/teacher/announcements"
-                className="text-sm font-medium text-gray-600 hover:text-gray-700"
+                className="text-sm font-medium text-indigo-600 hover:text-indigo-700"
               >
                 View All →
               </Link>

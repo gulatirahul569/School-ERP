@@ -608,7 +608,7 @@ const TeacherAnnouncement = () => {
                       </h2>
 
                       <p
-                        className={`mt-3 text-gray-600 leading-8 ${
+                        className={`text-gray-600 leading-8 ${
                           expanded[a._id]
                             ? ""
                             : "line-clamp-3"
@@ -627,7 +627,7 @@ const TeacherAnnouncement = () => {
                                 !prev[a._id],
                             }))
                           }
-                          className="mt-3 text-gray-600 font-medium hover:underline"
+                          className=" text-gray-600 font-medium hover:underline"
                         >
                           {expanded[a._id]
                             ? "Show Less"
@@ -640,7 +640,7 @@ const TeacherAnnouncement = () => {
 
                     {/* FOOTER */}
 
-                    <div className="mt-6 pt-4 border-t border-gray-100 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div className=" pt-4 border-t border-gray-100 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
                       <div className="flex flex-wrap gap-3">
 
