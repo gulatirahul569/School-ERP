@@ -158,7 +158,7 @@ const StudentAttendance = () => {
 
         {/* ================= HEADER ================= */}
 
-        <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 mb-6">
+        <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-4 mb-4">
 
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
 
@@ -198,7 +198,7 @@ const StudentAttendance = () => {
 
         {stats && (
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 mb-4">
 
             {/* Present */}
 
@@ -352,13 +352,13 @@ const StudentAttendance = () => {
 
         ) : (
 
-          <div className="grid lg:grid-cols-3 gap-6">
+          <div className="grid lg:grid-cols-3 gap-3">
 
             {/* ================= CALENDAR ================= */}
 
             <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
 
-              <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center justify-between mb-3">
 
                 <div>
 
@@ -425,7 +425,7 @@ const StudentAttendance = () => {
 
               <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
 
-                <div className="flex items-center justify-between mb-5">
+                <div className="flex items-center justify-between mb-4">
 
                   <h2 className="font-semibold text-gray-900">
                     Attendance Insight
@@ -538,7 +538,7 @@ const StudentAttendance = () => {
         )}
         {/* ================= SELECTED DAY ================= */}
 
-        <div className="mt-6 bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
+        <div className="mt-4 bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
 
           <div className="flex items-center justify-between mb-4">
 
@@ -688,7 +688,7 @@ const StudentAttendance = () => {
 
         {/* ================= ATTENDANCE HISTORY ================= */}
 
-        <div className="mt-6 bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden ">
+        <div className="mt-4 bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden ">
 
           <div className="p-6 border-b flex flex-col md:flex-row md:items-center md:justify-between gap-5">
 

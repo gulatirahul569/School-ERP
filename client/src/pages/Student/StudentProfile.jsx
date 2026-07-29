@@ -100,9 +100,9 @@ const StudentProfile = () => {
 
     return (
 
-      <div className="min-h-screen bg-gray-50 p-6">
+      <div className="min-h-screen bg-gray-50">
 
-        <div className="max-w-7xl mx-auto animate-pulse space-y-6">
+        <div className="max-w-7xl mx-auto animate-pulse space-y-3">
 
           <div className="h-56 rounded-3xl bg-white"></div>
 
@@ -169,13 +169,13 @@ const StudentProfile = () => {
     }`
     : "Not Assigned";
   return (
-    <div className="min-h-screen bg-gray-50  mt-0 p-6">
+    <div className="min-h-screen bg-gray-50  mt-0 ">
 
       <div className="max-w-7xl mx-auto space-y-6">
 
         {/* ================= HEADER ================= */}
 
-        <div className="relative overflow-hidden rounded-3xl  p-8 shadow-xl text-black">
+        <div className="relative overflow-hidden rounded-3xl  p-4  shadow-xl text-black">
 
           <div className="absolute -top-20 -right-20 h-64 w-64 rounded-full bg-white/10 blur-3xl"></div>
 
@@ -215,8 +215,8 @@ const StudentProfile = () => {
 
                   <span
                     className={`px-4 py-1 rounded-full text-sm ${isActive
-                        ? "bg-green-500"
-                        : "bg-red-500"
+                      ? "bg-green-500"
+                      : "bg-red-500"
                       }`}
                   >
                     {isActive ? "Active" : "Inactive"}
@@ -238,16 +238,15 @@ const StudentProfile = () => {
 
             <div className="text-center">
 
-              <p className="text-black/70">
-                Student ID
-              </p>
+              <div className="hidden md:block text-center">
+                <p className="text-black/70">
+                  Student ID
+                </p>
 
-              <h2 className="text-2xl font-bold mt-2 tracking-wider">
-
-                {profile._id?.slice(-6).toUpperCase()}
-
-              </h2>
-
+                <h2 className="text-2xl font-bold mt-2 tracking-wider">
+                  {profile._id?.slice(-6).toUpperCase()}
+                </h2>
+              </div>
             </div>
 
           </div>
@@ -363,8 +362,8 @@ const StudentProfile = () => {
 
                 <h2
                   className={`mt-2 text-lg font-bold ${isActive
-                      ? "text-green-600"
-                      : "text-red-600"
+                    ? "text-green-600"
+                    : "text-red-600"
                     }`}
                 >
                   {isActive ? "Active" : "Inactive"}
@@ -374,8 +373,8 @@ const StudentProfile = () => {
 
               <div
                 className={`w-14 h-14 rounded-2xl flex items-center justify-center ${isActive
-                    ? "bg-green-100"
-                    : "bg-red-100"
+                  ? "bg-green-100"
+                  : "bg-red-100"
                   }`}
               >
 
@@ -534,10 +533,10 @@ const StudentProfile = () => {
           </div>
 
         </div>
-        
+
       </div>
     </div>
-   ); 
+  );
 };
 
-        export default StudentProfile;
+export default StudentProfile;

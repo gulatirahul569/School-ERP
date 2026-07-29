@@ -230,7 +230,7 @@ const StudentDashboard = () => {
       </div>
 
       {/* ================= KPI CARDS ================= */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
 
         {/* Attendance */}
         <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-200">

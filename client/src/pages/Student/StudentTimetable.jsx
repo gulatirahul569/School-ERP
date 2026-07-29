@@ -68,76 +68,175 @@ const StudentTimetable = () => {
     return <div className="p-6 text-gray-500">Loading timetable...</div>;
   }
 
-  return (
-    <div className=" space-y">
-      {/* HEADER */}
-      <div className=" text-black pl-6 pr-6 text-center">
-        <h1 className="text-2xl font-bold">📅 Weekly Timetable</h1>
-        <p className="text-white/80 text-sm">
-          Fixed period schedule (with break)
-        </p>
-      </div>
+return (
+  <div className="p-3 sm:p-4 md:p-6 space-y-5">
+    {/* Header */}
+    <div className="bg-linear-to-r from-black to-gray-500 text-white p-4 sm:p-6 rounded-2xl shadow">
+      <h1 className="text-xl sm:text-2xl font-bold">
+        📅 Weekly Timetable
+      </h1>
 
-      {/* TABLE */}
-      <div className="overflow-x-auto bg-white rounded-2xl shadow border">
-        <table className="w-full border-collapse">
-          <thead>
-            <tr className="bg-gray-300">
-              <th className="p-3 border">Time</th>
-
-              {DAYS.map((day) => (
-                <th key={day} className="p-3 border">
-                  {day}
-                </th>
-              ))}
-            </tr>
-          </thead>
-
-          <tbody>
-            {TIME_SLOTS.map((slot, index) => (
-              <tr key={index} className="text-center border">
-                {/* TIME COLUMN */}
-                <td className="p-3 font-semibold border bg-gray-100">
-                  <div>{slot.label}</div>
-                  <div className="text-xs text-gray-500">{slot.time}</div>
-                </td>
-
-                {/* BREAK ROW */}
-                {slot.break ? (
-                  <td
-                    colSpan={6}
-                    className="p-4 bg-yellow-100 text-yellow-700 font-bold"
-                  >
-                    🍱 BREAK TIME (30 MIN)
-                  </td>
-                ) : (
-                  DAYS.map((day) => {
-                    const period = timetableMap?.[day]?.[slot.periodNo];
-
-                    return (
-                      <td key={day} className="p-3 border">
-                        {period ? (
-                          <div>
-                            <p className="font-semibold text-gray-800">
-                              {period.subject}
-                            </p>
-                            <p className="text-xs text-gray-500">
-                              {period.teacher?.name || "Teacher"}
-                            </p>
-                          </div>
-                        ) : (
-                          <span className="text-gray-300">-</span>
-                        )}
-                      </td>
-                    );
-                  })
-                )}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <p className="text-white/80 mt-1 text-sm sm:text-base">
+        Fixed period schedule (with break)
+      </p>
     </div>
+
+    {/* ================= Desktop ================= */}
+    <div className="hidden md:block overflow-x-auto bg-white rounded-2xl shadow border">
+      <table className="w-full min-w-275 border-collapse">
+        <thead>
+          <tr className="bg-gray-100">
+            <th className="border px-4 py-3">Time</th>
+
+            {DAYS.map((day) => (
+              <th
+                key={day}
+                className="border px-4 py-3 whitespace-nowrap"
+              >
+                {day}
+              </th>
+            ))}
+          </tr>
+        </thead>
+
+        <tbody>
+          {TIME_SLOTS.map((slot, index) => (
+            <tr key={index}>
+              {/* Time */}
+              <td className="border px-4 py-4 bg-gray-50">
+                <div className="font-semibold">
+                  {slot.label}
+                </div>
+
+                <div className="text-xs text-gray-500">
+                  {slot.time}
+                </div>
+              </td>
+
+              {slot.break ? (
+                <td
+                  colSpan={6}
+                  className="border bg-yellow-100 text-yellow-700 font-bold text-center py-5"
+                >
+                  🍱 BREAK TIME (30 MIN)
+                </td>
+              ) : (
+                DAYS.map((day) => {
+                  const period =
+                    timetableMap?.[day]?.[slot.periodNo];
+
+                  return (
+                    <td
+                      key={day}
+                      className="border px-3 py-5 text-center h-24"
+                    >
+                      {period ? (
+                        <div>
+                          <p className="font-semibold text-gray-800">
+                            {period.subject}
+                          </p>
+
+                          <p className="text-sm text-gray-500">
+                            {period.teacher?.name || "Teacher"}
+                          </p>
+                        </div>
+                      ) : (
+                        <span className="text-gray-300 text-xl">
+                          —
+                        </span>
+                      )}
+                    </td>
+                  );
+                })
+              )}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {!loading && timetable.length === 0 && (
+        <div className="text-center py-10 text-gray-500">
+          No timetable available.
+        </div>
+      )}
+    </div>
+
+    {/* ================= Mobile ================= */}
+    <div className="md:hidden space-y-5">
+      {DAYS.map((day) => (
+        <div
+          key={day}
+          className="bg-white rounded-2xl shadow border overflow-hidden"
+        >
+          {/* Day Header */}
+          <div className="bg-linear-to-r from-black to-gray-500 text-white px-4 py-3">
+            <h2 className="text-lg font-bold">
+              {day}
+            </h2>
+          </div>
+
+          <div className="divide-y divide-gray-200">
+            {TIME_SLOTS.map((slot, index) => {
+              if (slot.break) {
+                return (
+                  <div
+                    key={index}
+                    className="bg-yellow-100 text-yellow-700 font-semibold text-center py-3"
+                  >
+                    🍱 BREAK (12:00 - 12:30)
+                  </div>
+                );
+              }
+
+              const period =
+                timetableMap?.[day]?.[slot.periodNo];
+
+              return (
+                <div
+                  key={slot.periodNo}
+                  className="flex justify-between items-start p-4"
+                >
+                  {/* Left */}
+                  <div>
+                    <p className="font-semibold">
+                      {slot.label}
+                    </p>
+
+                    <p className="text-xs text-gray-500">
+                      {slot.time}
+                    </p>
+                  </div>
+
+                  {/* Right */}
+                  {period ? (
+                    <div className="text-right">
+                      <p className="font-semibold text-gray-900">
+                        {period.subject}
+                      </p>
+
+                      <p className="text-sm text-gray-600">
+                        {period.teacher?.name || "Teacher"}
+                      </p>
+                    </div>
+                  ) : (
+                    <span className="text-gray-400 font-medium">
+                      Free
+                    </span>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+
+      {!loading && timetable.length === 0 && (
+        <div className="bg-white rounded-xl border shadow text-center py-8 text-gray-500">
+          No timetable available.
+        </div>
+      )}
+    </div>
+  </div>
   );
 };
 
